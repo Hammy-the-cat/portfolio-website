@@ -1,0 +1,294 @@
+{
+  "teachers": [
+    {
+      "id": 1,
+      "name": "田中先生",
+      "subject": "数学",
+      "weeklyLessons": 16,
+      "preferredDays": ["月", "水", "金"],
+      "unavailablePeriods": []
+    },
+    {
+      "id": 2,
+      "name": "佐藤先生",
+      "subject": "国語",
+      "weeklyLessons": 14,
+      "preferredDays": ["火", "木"],
+      "unavailablePeriods": []
+    },
+    {
+      "id": 3,
+      "name": "鈴木先生",
+      "subject": "英語",
+      "weeklyLessons": 12,
+      "preferredDays": ["月", "火", "金"],
+      "unavailablePeriods": []
+    },
+    {
+      "id": 4,
+      "name": "高橋先生",
+      "subject": "理科",
+      "weeklyLessons": 10,
+      "preferredDays": ["火", "木"],
+      "unavailablePeriods": []
+    },
+    {
+      "id": 5,
+      "name": "伊藤先生",
+      "subject": "社会",
+      "weeklyLessons": 8,
+      "preferredDays": ["水", "金"],
+      "unavailablePeriods": []
+    },
+    {
+      "id": 6,
+      "name": "山田先生",
+      "subject": "音楽",
+      "weeklyLessons": 6,
+      "preferredDays": ["月", "水"],
+      "unavailablePeriods": []
+    },
+    {
+      "id": 7,
+      "name": "渡辺先生",
+      "subject": "美術",
+      "weeklyLessons": 4,
+      "preferredDays": ["火", "木"],
+      "unavailablePeriods": []
+    },
+    {
+      "id": 8,
+      "name": "松本先生",
+      "subject": "体育",
+      "weeklyLessons": 8,
+      "preferredDays": ["月", "水", "金"],
+      "unavailablePeriods": []
+    }
+  ],
+  "classes": [
+    {
+      "id": 1,
+      "grade": 1,
+      "name": "A組",
+      "homeroom": "1-A教室"
+    },
+    {
+      "id": 2,
+      "grade": 1,
+      "name": "B組",
+      "homeroom": "1-B教室"
+    },
+    {
+      "id": 3,
+      "grade": 1,
+      "name": "C組",
+      "homeroom": "1-C教室"
+    },
+    {
+      "id": 4,
+      "grade": 2,
+      "name": "A組",
+      "homeroom": "2-A教室"
+    },
+    {
+      "id": 5,
+      "grade": 2,
+      "name": "B組",
+      "homeroom": "2-B教室"
+    },
+    {
+      "id": 6,
+      "grade": 3,
+      "name": "A組",
+      "homeroom": "3-A教室"
+    },
+    {
+      "id": 7,
+      "grade": 3,
+      "name": "B組",
+      "homeroom": "3-B教室"
+    }
+  ],
+  "rooms": [
+    {
+      "id": 1,
+      "name": "1-A教室",
+      "type": "normal",
+      "capacity": 40,
+      "equipment": ["プロジェクター", "スクリーン"]
+    },
+    {
+      "id": 2,
+      "name": "1-B教室",
+      "type": "normal",
+      "capacity": 40,
+      "equipment": ["プロジェクター", "スクリーン"]
+    },
+    {
+      "id": 3,
+      "name": "1-C教室",
+      "type": "normal",
+      "capacity": 40,
+      "equipment": ["プロジェクター", "スクリーン"]
+    },
+    {
+      "id": 4,
+      "name": "2-A教室",
+      "type": "normal",
+      "capacity": 40,
+      "equipment": ["プロジェクター", "スクリーン"]
+    },
+    {
+      "id": 5,
+      "name": "2-B教室",
+      "type": "normal",
+      "capacity": 40,
+      "equipment": ["プロジェクター", "スクリーン"]
+    },
+    {
+      "id": 6,
+      "name": "3-A教室",
+      "type": "normal",
+      "capacity": 40,
+      "equipment": ["プロジェクター", "スクリーン"]
+    },
+    {
+      "id": 7,
+      "name": "3-B教室",
+      "type": "normal",
+      "capacity": 40,
+      "equipment": ["プロジェクター", "スクリーン"]
+    },
+    {
+      "id": 8,
+      "name": "理科室1",
+      "type": "science",
+      "capacity": 30,
+      "equipment": ["実験台", "薬品庫", "顕微鏡"],
+      "availableDays": ["月", "火", "水", "木", "金"]
+    },
+    {
+      "id": 9,
+      "name": "理科室2",
+      "type": "science",
+      "capacity": 30,
+      "equipment": ["実験台", "薬品庫", "電子天秤"],
+      "availableDays": ["月", "火", "水", "木", "金"]
+    },
+    {
+      "id": 10,
+      "name": "音楽室",
+      "type": "music",
+      "capacity": 35,
+      "equipment": ["ピアノ", "オルガン", "音響設備"],
+      "availableDays": ["月", "火", "水", "木", "金"]
+    },
+    {
+      "id": 11,
+      "name": "美術室",
+      "type": "art",
+      "capacity": 30,
+      "equipment": ["絵具", "画材", "陶芸窯"],
+      "availableDays": ["月", "火", "水", "木", "金"]
+    },
+    {
+      "id": 12,
+      "name": "体育館",
+      "type": "gym",
+      "capacity": 200,
+      "equipment": ["バスケットゴール", "バレーネット", "体操用具"],
+      "availableDays": ["月", "火", "水", "木", "金"]
+    },
+    {
+      "id": 13,
+      "name": "コンピューター室",
+      "type": "computer",
+      "capacity": 35,
+      "equipment": ["PC", "プロジェクター", "ネットワーク"],
+      "availableDays": ["月", "火", "水", "木", "金"]
+    }
+  ],
+  "subjects": [
+    {
+      "name": "国語",
+      "weeklyHours": 4,
+      "requiredRoom": "normal"
+    },
+    {
+      "name": "数学",
+      "weeklyHours": 4,
+      "requiredRoom": "normal"
+    },
+    {
+      "name": "英語",
+      "weeklyHours": 4,
+      "requiredRoom": "normal"
+    },
+    {
+      "name": "理科",
+      "weeklyHours": 3,
+      "requiredRoom": "science"
+    },
+    {
+      "name": "社会",
+      "weeklyHours": 3,
+      "requiredRoom": "normal"
+    },
+    {
+      "name": "音楽",
+      "weeklyHours": 1,
+      "requiredRoom": "music"
+    },
+    {
+      "name": "美術",
+      "weeklyHours": 1,
+      "requiredRoom": "art"
+    },
+    {
+      "name": "体育",
+      "weeklyHours": 2,
+      "requiredRoom": "gym"
+    },
+    {
+      "name": "技術・家庭",
+      "weeklyHours": 1,
+      "requiredRoom": "normal"
+    },
+    {
+      "name": "道徳",
+      "weeklyHours": 1,
+      "requiredRoom": "normal"
+    },
+    {
+      "name": "総合的な学習の時間",
+      "weeklyHours": 1,
+      "requiredRoom": "normal"
+    },
+    {
+      "name": "特別活動",
+      "weeklyHours": 1,
+      "requiredRoom": "normal"
+    }
+  ],
+  "timeSlots": {
+    "periods": 6,
+    "days": 5,
+    "dayNames": ["月", "火", "水", "木", "金"],
+    "periodTimes": [
+      {"period": 1, "start": "08:45", "end": "09:35"},
+      {"period": 2, "start": "09:45", "end": "10:35"},
+      {"period": 3, "start": "10:45", "end": "11:35"},
+      {"period": 4, "start": "11:45", "end": "12:35"},
+      {"period": 5, "start": "13:25", "end": "14:15"},
+      {"period": 6, "start": "14:25", "end": "15:15"}
+    ]
+  },
+  "constraints": {
+    "maxPeriodsPerDay": 6,
+    "maxConsecutiveSameSubject": 2,
+    "requiredBreaks": ["lunch"],
+    "lunchBreak": {"start": "12:35", "end": "13:25"},
+    "specialRoomConflictPrevention": true,
+    "teacherConflictPrevention": true
+  }
+}
