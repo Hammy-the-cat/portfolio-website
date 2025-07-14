@@ -251,28 +251,17 @@ class TimetableGenerator {
 
     showMessage(message) {
         const messageDiv = document.createElement('div');
+        messageDiv.className = 'notification';
         messageDiv.textContent = message;
-        messageDiv.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: #4CAF50;
-            color: white;
-            padding: 1rem;
-            border-radius: 4px;
-            z-index: 10000;
-            opacity: 0;
-            transition: opacity 0.3s;
-        `;
         
         document.body.appendChild(messageDiv);
         
         setTimeout(() => {
-            messageDiv.style.opacity = '1';
+            messageDiv.classList.add('show');
         }, 100);
         
         setTimeout(() => {
-            messageDiv.style.opacity = '0';
+            messageDiv.classList.remove('show');
             setTimeout(() => {
                 document.body.removeChild(messageDiv);
             }, 300);
