@@ -14,7 +14,8 @@
       "Bash(rm:*)",
       "Bash(git commit:*)",
       "Bash(gh repo create:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(find:*)"
     ],
     "deny": []
   }
