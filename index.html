@@ -9,109 +9,185 @@
 <body>
     <header>
         <h1>時間割ジェネレーター</h1>
-        <div class="controls">
-            <button id="addSubject">科目追加</button>
-            <button id="saveSchedule">保存</button>
-            <button id="loadSchedule">読み込み</button>
-            <button id="clearSchedule">クリア</button>
-        </div>
+        <nav class="tab-navigation">
+            <button class="tab-button active" data-tab="settings">設定</button>
+            <button class="tab-button" data-tab="generate">時間割生成</button>
+            <button class="tab-button" data-tab="output">出力</button>
+        </nav>
     </header>
 
     <main>
-        <div class="schedule-container">
-            <div class="time-labels">
-                <div class="time-header"></div>
-                <div class="time-slot">1限<br>9:00-10:30</div>
-                <div class="time-slot">2限<br>10:40-12:10</div>
-                <div class="time-slot">3限<br>13:00-14:30</div>
-                <div class="time-slot">4限<br>14:40-16:10</div>
-                <div class="time-slot">5限<br>16:20-17:50</div>
-                <div class="time-slot">6限<br>18:00-19:30</div>
+        <!-- 設定タブ -->
+        <section id="settings-tab" class="tab-content active">
+            <div class="settings-container">
+                <!-- 教師設定 -->
+                <div class="settings-section">
+                    <h2>教師情報</h2>
+                    <div class="form-row">
+                        <input type="text" id="teacher-name" placeholder="教師名">
+                        <input type="text" id="teacher-subject" placeholder="担当教科">
+                        <input type="number" id="teacher-hours" placeholder="週授業時間数" min="1" max="30">
+                        <button id="add-teacher">追加</button>
+                    </div>
+                    <div id="teachers-list" class="data-list"></div>
+                </div>
+
+                <!-- クラス設定 -->
+                <div class="settings-section">
+                    <h2>クラス情報</h2>
+                    <div class="form-row">
+                        <input type="text" id="class-name" placeholder="クラス名（例：1-A）">
+                        <input type="number" id="class-students" placeholder="生徒数" min="1" max="50">
+                        <button id="add-class">追加</button>
+                    </div>
+                    <div id="classes-list" class="data-list"></div>
+                </div>
+
+                <!-- 教科設定 -->
+                <div class="settings-section">
+                    <h2>教科情報</h2>
+                    <div class="form-row">
+                        <input type="text" id="subject-name" placeholder="教科名">
+                        <input type="number" id="subject-hours" placeholder="週授業時間数" min="1" max="10">
+                        <input type="color" id="subject-color" value="#4CAF50">
+                        <button id="add-subject">追加</button>
+                    </div>
+                    <div id="subjects-list" class="data-list"></div>
+                </div>
+
+                <div class="settings-actions">
+                    <button id="save-settings" class="primary-button">設定を保存</button>
+                    <button id="load-settings" class="secondary-button">設定を読み込み</button>
+                    <button id="reset-settings" class="danger-button">設定をリセット</button>
+                </div>
             </div>
+        </section>
 
-            <div class="schedule-grid">
-                <div class="day-header">月</div>
-                <div class="day-header">火</div>
-                <div class="day-header">水</div>
-                <div class="day-header">木</div>
-                <div class="day-header">金</div>
+        <!-- 時間割生成タブ -->
+        <section id="generate-tab" class="tab-content">
+            <div class="generate-container">
+                <div class="generate-controls">
+                    <h2>時間割自動生成</h2>
+                    <div class="generation-options">
+                        <label>
+                            <input type="checkbox" id="optimize-teachers" checked>
+                            教師の授業時間を最適化
+                        </label>
+                        <label>
+                            <input type="checkbox" id="avoid-conflicts" checked>
+                            時間割の競合を回避
+                        </label>
+                        <label>
+                            <input type="checkbox" id="balance-subjects" checked>
+                            教科をバランス良く配置
+                        </label>
+                    </div>
+                    <button id="generate-schedule" class="primary-button">時間割を生成</button>
+                    <button id="manual-edit" class="secondary-button">手動編集モード</button>
+                </div>
 
-                <!-- 1限 -->
-                <div class="schedule-cell" data-day="0" data-period="0"></div>
-                <div class="schedule-cell" data-day="1" data-period="0"></div>
-                <div class="schedule-cell" data-day="2" data-period="0"></div>
-                <div class="schedule-cell" data-day="3" data-period="0"></div>
-                <div class="schedule-cell" data-day="4" data-period="0"></div>
+                <div class="schedule-display">
+                    <div class="schedule-container">
+                        <div class="time-labels">
+                            <div class="time-header"></div>
+                            <div class="time-slot">1限<br>9:00-10:30</div>
+                            <div class="time-slot">2限<br>10:40-12:10</div>
+                            <div class="time-slot">3限<br>13:00-14:30</div>
+                            <div class="time-slot">4限<br>14:40-16:10</div>
+                            <div class="time-slot">5限<br>16:20-17:50</div>
+                            <div class="time-slot">6限<br>18:00-19:30</div>
+                        </div>
 
-                <!-- 2限 -->
-                <div class="schedule-cell" data-day="0" data-period="1"></div>
-                <div class="schedule-cell" data-day="1" data-period="1"></div>
-                <div class="schedule-cell" data-day="2" data-period="1"></div>
-                <div class="schedule-cell" data-day="3" data-period="1"></div>
-                <div class="schedule-cell" data-day="4" data-period="1"></div>
+                        <div class="schedule-grid">
+                            <div class="day-header">月</div>
+                            <div class="day-header">火</div>
+                            <div class="day-header">水</div>
+                            <div class="day-header">木</div>
+                            <div class="day-header">金</div>
 
-                <!-- 3限 -->
-                <div class="schedule-cell" data-day="0" data-period="2"></div>
-                <div class="schedule-cell" data-day="1" data-period="2"></div>
-                <div class="schedule-cell" data-day="2" data-period="2"></div>
-                <div class="schedule-cell" data-day="3" data-period="2"></div>
-                <div class="schedule-cell" data-day="4" data-period="2"></div>
+                            <!-- 1限 -->
+                            <div class="schedule-cell" data-day="0" data-period="0"></div>
+                            <div class="schedule-cell" data-day="1" data-period="0"></div>
+                            <div class="schedule-cell" data-day="2" data-period="0"></div>
+                            <div class="schedule-cell" data-day="3" data-period="0"></div>
+                            <div class="schedule-cell" data-day="4" data-period="0"></div>
 
-                <!-- 4限 -->
-                <div class="schedule-cell" data-day="0" data-period="3"></div>
-                <div class="schedule-cell" data-day="1" data-period="3"></div>
-                <div class="schedule-cell" data-day="2" data-period="3"></div>
-                <div class="schedule-cell" data-day="3" data-period="3"></div>
-                <div class="schedule-cell" data-day="4" data-period="3"></div>
+                            <!-- 2限 -->
+                            <div class="schedule-cell" data-day="0" data-period="1"></div>
+                            <div class="schedule-cell" data-day="1" data-period="1"></div>
+                            <div class="schedule-cell" data-day="2" data-period="1"></div>
+                            <div class="schedule-cell" data-day="3" data-period="1"></div>
+                            <div class="schedule-cell" data-day="4" data-period="1"></div>
 
-                <!-- 5限 -->
-                <div class="schedule-cell" data-day="0" data-period="4"></div>
-                <div class="schedule-cell" data-day="1" data-period="4"></div>
-                <div class="schedule-cell" data-day="2" data-period="4"></div>
-                <div class="schedule-cell" data-day="3" data-period="4"></div>
-                <div class="schedule-cell" data-day="4" data-period="4"></div>
+                            <!-- 3限 -->
+                            <div class="schedule-cell" data-day="0" data-period="2"></div>
+                            <div class="schedule-cell" data-day="1" data-period="2"></div>
+                            <div class="schedule-cell" data-day="2" data-period="2"></div>
+                            <div class="schedule-cell" data-day="3" data-period="2"></div>
+                            <div class="schedule-cell" data-day="4" data-period="2"></div>
 
-                <!-- 6限 -->
-                <div class="schedule-cell" data-day="0" data-period="5"></div>
-                <div class="schedule-cell" data-day="1" data-period="5"></div>
-                <div class="schedule-cell" data-day="2" data-period="5"></div>
-                <div class="schedule-cell" data-day="3" data-period="5"></div>
-                <div class="schedule-cell" data-day="4" data-period="5"></div>
+                            <!-- 4限 -->
+                            <div class="schedule-cell" data-day="0" data-period="3"></div>
+                            <div class="schedule-cell" data-day="1" data-period="3"></div>
+                            <div class="schedule-cell" data-day="2" data-period="3"></div>
+                            <div class="schedule-cell" data-day="3" data-period="3"></div>
+                            <div class="schedule-cell" data-day="4" data-period="3"></div>
+
+                            <!-- 5限 -->
+                            <div class="schedule-cell" data-day="0" data-period="4"></div>
+                            <div class="schedule-cell" data-day="1" data-period="4"></div>
+                            <div class="schedule-cell" data-day="2" data-period="4"></div>
+                            <div class="schedule-cell" data-day="3" data-period="4"></div>
+                            <div class="schedule-cell" data-day="4" data-period="4"></div>
+
+                            <!-- 6限 -->
+                            <div class="schedule-cell" data-day="0" data-period="5"></div>
+                            <div class="schedule-cell" data-day="1" data-period="5"></div>
+                            <div class="schedule-cell" data-day="2" data-period="5"></div>
+                            <div class="schedule-cell" data-day="3" data-period="5"></div>
+                            <div class="schedule-cell" data-day="4" data-period="5"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
+        </section>
 
-        <div class="subject-panel">
-            <h2>科目一覧</h2>
-            <div id="subjectList"></div>
-        </div>
+        <!-- 出力タブ -->
+        <section id="output-tab" class="tab-content">
+            <div class="output-container">
+                <h2>時間割出力</h2>
+                
+                <div class="output-options">
+                    <div class="output-section">
+                        <h3>画像として出力</h3>
+                        <button id="export-png" class="export-button">PNG形式でダウンロード</button>
+                        <button id="export-pdf" class="export-button">PDF形式でダウンロード</button>
+                    </div>
+
+                    <div class="output-section">
+                        <h3>データとして出力</h3>
+                        <button id="export-json" class="export-button">JSON形式でダウンロード</button>
+                        <button id="export-csv" class="export-button">CSV形式でダウンロード</button>
+                        <button id="export-excel" class="export-button">Excel形式でダウンロード</button>
+                    </div>
+
+                    <div class="output-section">
+                        <h3>プロジェクトファイル</h3>
+                        <button id="export-project" class="export-button">プロジェクトファイルをダウンロード</button>
+                        <input type="file" id="import-project" accept=".json" style="display: none;">
+                        <button id="import-project-btn" class="import-button">プロジェクトファイルを読み込み</button>
+                    </div>
+                </div>
+
+                <div class="preview-section">
+                    <h3>プレビュー</h3>
+                    <div id="schedule-preview" class="schedule-preview">
+                        <p>時間割を生成してからプレビューが表示されます</p>
+                    </div>
+                </div>
+            </div>
+        </section>
     </main>
-
-    <!-- 科目追加モーダル -->
-    <div id="subjectModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>科目を追加</h2>
-            <form id="subjectForm">
-                <div class="form-group">
-                    <label for="subjectName">科目名:</label>
-                    <input type="text" id="subjectName" required>
-                </div>
-                <div class="form-group">
-                    <label for="teacher">担当教員:</label>
-                    <input type="text" id="teacher">
-                </div>
-                <div class="form-group">
-                    <label for="classroom">教室:</label>
-                    <input type="text" id="classroom">
-                </div>
-                <div class="form-group">
-                    <label for="color">色:</label>
-                    <input type="color" id="color" value="#4CAF50">
-                </div>
-                <button type="submit">追加</button>
-            </form>
-        </div>
-    </div>
 
     <script src="script.js"></script>
 </body>

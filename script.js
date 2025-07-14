@@ -1,190 +1,234 @@
 class TimetableGenerator {
     constructor() {
+        this.teachers = [];
+        this.classes = [];
         this.subjects = [];
         this.schedule = {};
-        this.draggedSubject = null;
+        this.currentTab = 'settings';
         this.init();
     }
 
     init() {
         this.loadFromStorage();
         this.setupEventListeners();
-        this.renderSubjects();
-        this.renderSchedule();
+        this.renderAllData();
     }
 
     setupEventListeners() {
-        document.getElementById('addSubject').addEventListener('click', () => {
-            this.openModal();
+        // タブ切り替え
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.addEventListener('click', (e) => {
+                this.switchTab(e.target.dataset.tab);
+            });
         });
 
-        document.getElementById('saveSchedule').addEventListener('click', () => {
-            this.saveToStorage();
-            this.showMessage('時間割を保存しました');
-        });
-
-        document.getElementById('loadSchedule').addEventListener('click', () => {
-            this.loadFromStorage();
-            this.showMessage('時間割を読み込みました');
-        });
-
-        document.getElementById('clearSchedule').addEventListener('click', () => {
-            if (confirm('時間割をクリアしますか？')) {
-                this.clearSchedule();
-                this.showMessage('時間割をクリアしました');
-            }
-        });
-
-        document.getElementById('subjectForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            this.addSubject();
-        });
-
-        document.querySelector('.close').addEventListener('click', () => {
-            this.closeModal();
-        });
-
-        document.getElementById('subjectModal').addEventListener('click', (e) => {
-            if (e.target.id === 'subjectModal') {
-                this.closeModal();
-            }
-        });
-
-        this.setupDragAndDrop();
-    }
-
-    setupDragAndDrop() {
-        const cells = document.querySelectorAll('.schedule-cell');
+        // 設定画面のイベント
+        document.getElementById('add-teacher').addEventListener('click', () => this.addTeacher());
+        document.getElementById('add-class').addEventListener('click', () => this.addClass());
+        document.getElementById('add-subject').addEventListener('click', () => this.addSubject());
         
-        cells.forEach(cell => {
-            cell.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                cell.classList.add('drag-over');
-            });
+        document.getElementById('save-settings').addEventListener('click', () => this.saveSettings());
+        document.getElementById('load-settings').addEventListener('click', () => this.loadSettings());
+        document.getElementById('reset-settings').addEventListener('click', () => this.resetSettings());
 
-            cell.addEventListener('dragleave', () => {
-                cell.classList.remove('drag-over');
-            });
+        // 生成画面のイベント
+        document.getElementById('generate-schedule').addEventListener('click', () => this.generateSchedule());
+        document.getElementById('manual-edit').addEventListener('click', () => this.enableManualEdit());
 
-            cell.addEventListener('drop', (e) => {
-                e.preventDefault();
-                cell.classList.remove('drag-over');
-                
-                const day = parseInt(cell.dataset.day);
-                const period = parseInt(cell.dataset.period);
-                
-                if (this.draggedSubject) {
-                    this.placeSubject(this.draggedSubject, day, period);
-                    this.draggedSubject = null;
-                }
-            });
+        // 出力画面のイベント
+        document.getElementById('export-png').addEventListener('click', () => this.exportPNG());
+        document.getElementById('export-pdf').addEventListener('click', () => this.exportPDF());
+        document.getElementById('export-json').addEventListener('click', () => this.exportJSON());
+        document.getElementById('export-csv').addEventListener('click', () => this.exportCSV());
+        document.getElementById('export-excel').addEventListener('click', () => this.exportExcel());
+        document.getElementById('export-project').addEventListener('click', () => this.exportProject());
+        
+        document.getElementById('import-project-btn').addEventListener('click', () => {
+            document.getElementById('import-project').click();
         });
+        document.getElementById('import-project').addEventListener('change', (e) => this.importProject(e));
     }
 
-    openModal() {
-        document.getElementById('subjectModal').style.display = 'block';
-        document.getElementById('subjectName').focus();
+    switchTab(tabName) {
+        // タブボタンの状態を更新
+        document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+        document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+
+        // タブコンテンツの表示を切り替え
+        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+        document.getElementById(`${tabName}-tab`).classList.add('active');
+
+        this.currentTab = tabName;
+
+        // 出力タブの場合はプレビューを更新
+        if (tabName === 'output') {
+            this.updatePreview();
+        }
     }
 
-    closeModal() {
-        document.getElementById('subjectModal').style.display = 'none';
-        document.getElementById('subjectForm').reset();
+    // === 設定画面の機能 ===
+    addTeacher() {
+        const name = document.getElementById('teacher-name').value.trim();
+        const subject = document.getElementById('teacher-subject').value.trim();
+        const hours = parseInt(document.getElementById('teacher-hours').value);
+
+        if (!name || !subject || !hours) {
+            this.showMessage('すべての項目を入力してください', 'error');
+            return;
+        }
+
+        const teacher = {
+            id: Date.now(),
+            name,
+            subject,
+            hours
+        };
+
+        this.teachers.push(teacher);
+        this.renderTeachers();
+        this.clearTeacherForm();
+        this.saveToStorage();
+        this.showMessage('教師を追加しました');
+    }
+
+    addClass() {
+        const name = document.getElementById('class-name').value.trim();
+        const students = parseInt(document.getElementById('class-students').value);
+
+        if (!name || !students) {
+            this.showMessage('すべての項目を入力してください', 'error');
+            return;
+        }
+
+        const classObj = {
+            id: Date.now(),
+            name,
+            students
+        };
+
+        this.classes.push(classObj);
+        this.renderClasses();
+        this.clearClassForm();
+        this.saveToStorage();
+        this.showMessage('クラスを追加しました');
     }
 
     addSubject() {
-        const name = document.getElementById('subjectName').value.trim();
-        const teacher = document.getElementById('teacher').value.trim();
-        const classroom = document.getElementById('classroom').value.trim();
-        const color = document.getElementById('color').value;
+        const name = document.getElementById('subject-name').value.trim();
+        const hours = parseInt(document.getElementById('subject-hours').value);
+        const color = document.getElementById('subject-color').value;
 
-        if (!name) {
-            alert('科目名を入力してください');
+        if (!name || !hours) {
+            this.showMessage('すべての項目を入力してください', 'error');
             return;
         }
 
         const subject = {
             id: Date.now(),
             name,
-            teacher,
-            classroom,
+            hours,
             color
         };
 
         this.subjects.push(subject);
         this.renderSubjects();
-        this.closeModal();
+        this.clearSubjectForm();
         this.saveToStorage();
-        this.showMessage('科目を追加しました');
+        this.showMessage('教科を追加しました');
+    }
+
+    removeTeacher(id) {
+        if (confirm('この教師を削除しますか？')) {
+            this.teachers = this.teachers.filter(t => t.id !== id);
+            this.renderTeachers();
+            this.saveToStorage();
+            this.showMessage('教師を削除しました');
+        }
+    }
+
+    removeClass(id) {
+        if (confirm('このクラスを削除しますか？')) {
+            this.classes = this.classes.filter(c => c.id !== id);
+            this.renderClasses();
+            this.saveToStorage();
+            this.showMessage('クラスを削除しました');
+        }
     }
 
     removeSubject(id) {
-        if (confirm('この科目を削除しますか？')) {
-            this.subjects = this.subjects.filter(subject => subject.id !== id);
-            
-            for (let key in this.schedule) {
-                if (this.schedule[key] && this.schedule[key].id === id) {
-                    delete this.schedule[key];
-                }
-            }
-            
+        if (confirm('この教科を削除しますか？')) {
+            this.subjects = this.subjects.filter(s => s.id !== id);
             this.renderSubjects();
-            this.renderSchedule();
             this.saveToStorage();
-            this.showMessage('科目を削除しました');
+            this.showMessage('教科を削除しました');
         }
     }
 
-    placeSubject(subject, day, period) {
-        const key = `${day}-${period}`;
-        
-        if (this.schedule[key]) {
-            if (!confirm('既に科目が配置されています。上書きしますか？')) {
-                return;
-            }
-        }
-        
-        this.schedule[key] = subject;
+    // === レンダリング機能 ===
+    renderAllData() {
+        this.renderTeachers();
+        this.renderClasses();
+        this.renderSubjects();
         this.renderSchedule();
-        this.saveToStorage();
     }
 
-    removeFromSchedule(day, period) {
-        const key = `${day}-${period}`;
-        delete this.schedule[key];
-        this.renderSchedule();
-        this.saveToStorage();
+    renderTeachers() {
+        const container = document.getElementById('teachers-list');
+        container.innerHTML = '';
+
+        this.teachers.forEach(teacher => {
+            const element = document.createElement('div');
+            element.className = 'data-item';
+            element.innerHTML = `
+                <div class="data-item-info">
+                    <div class="data-item-name">${teacher.name}</div>
+                    <div class="data-item-details">担当: ${teacher.subject} | 週${teacher.hours}時間</div>
+                </div>
+                <div class="data-item-actions">
+                    <button onclick="timetable.removeTeacher(${teacher.id})">削除</button>
+                </div>
+            `;
+            container.appendChild(element);
+        });
+    }
+
+    renderClasses() {
+        const container = document.getElementById('classes-list');
+        container.innerHTML = '';
+
+        this.classes.forEach(classObj => {
+            const element = document.createElement('div');
+            element.className = 'data-item';
+            element.innerHTML = `
+                <div class="data-item-info">
+                    <div class="data-item-name">${classObj.name}</div>
+                    <div class="data-item-details">生徒数: ${classObj.students}人</div>
+                </div>
+                <div class="data-item-actions">
+                    <button onclick="timetable.removeClass(${classObj.id})">削除</button>
+                </div>
+            `;
+            container.appendChild(element);
+        });
     }
 
     renderSubjects() {
-        const container = document.getElementById('subjectList');
+        const container = document.getElementById('subjects-list');
         container.innerHTML = '';
 
         this.subjects.forEach(subject => {
             const element = document.createElement('div');
-            element.className = 'subject-item';
+            element.className = 'data-item';
             element.style.borderLeftColor = subject.color;
-            element.draggable = true;
-            
             element.innerHTML = `
-                <div class="subject-item-name">${subject.name}</div>
-                <div class="subject-item-details">
-                    ${subject.teacher ? `担当: ${subject.teacher}` : ''}
-                    ${subject.classroom ? `教室: ${subject.classroom}` : ''}
+                <div class="data-item-info">
+                    <div class="data-item-name">${subject.name}</div>
+                    <div class="data-item-details">週${subject.hours}時間</div>
                 </div>
-                <div class="subject-item-actions">
+                <div class="data-item-actions">
                     <button onclick="timetable.removeSubject(${subject.id})">削除</button>
                 </div>
             `;
-
-            element.addEventListener('dragstart', (e) => {
-                this.draggedSubject = subject;
-                element.classList.add('dragging');
-            });
-
-            element.addEventListener('dragend', () => {
-                element.classList.remove('dragging');
-            });
-
             container.appendChild(element);
         });
     }
@@ -196,24 +240,20 @@ class TimetableGenerator {
             const day = parseInt(cell.dataset.day);
             const period = parseInt(cell.dataset.period);
             const key = `${day}-${period}`;
-            const subject = this.schedule[key];
+            const assignment = this.schedule[key];
             
-            if (subject) {
+            if (assignment) {
                 cell.classList.add('has-subject');
-                cell.style.backgroundColor = subject.color;
+                cell.style.backgroundColor = assignment.subject.color;
                 cell.innerHTML = `
                     <div class="subject-content">
-                        <div class="subject-name">${subject.name}</div>
+                        <div class="subject-name">${assignment.subject.name}</div>
                         <div class="subject-details">
-                            ${subject.teacher ? subject.teacher : ''}
-                            ${subject.classroom ? `<br>${subject.classroom}` : ''}
+                            ${assignment.teacher ? assignment.teacher.name : ''}
+                            ${assignment.class ? `<br>${assignment.class.name}` : ''}
                         </div>
                     </div>
                 `;
-                
-                cell.addEventListener('dblclick', () => {
-                    this.removeFromSchedule(day, period);
-                });
             } else {
                 cell.classList.remove('has-subject');
                 cell.style.backgroundColor = '';
@@ -222,37 +262,241 @@ class TimetableGenerator {
         });
     }
 
-    saveToStorage() {
+    // === 時間割生成機能 ===
+    generateSchedule() {
+        if (this.subjects.length === 0 || this.teachers.length === 0 || this.classes.length === 0) {
+            this.showMessage('教師、クラス、教科の情報を設定してください', 'error');
+            return;
+        }
+
+        this.schedule = {};
+        
+        const optimizeTeachers = document.getElementById('optimize-teachers').checked;
+        const avoidConflicts = document.getElementById('avoid-conflicts').checked;
+        const balanceSubjects = document.getElementById('balance-subjects').checked;
+
+        // シンプルな時間割生成アルゴリズム
+        const totalSlots = 5 * 6; // 5日 × 6限
+        const assignments = [];
+
+        // 各教科について必要な授業時間数分の割り当てを作成
+        this.subjects.forEach(subject => {
+            for (let i = 0; i < subject.hours; i++) {
+                // 対応する教師を見つける
+                const teacher = this.teachers.find(t => t.subject === subject.name);
+                // 最初のクラスを使用（複数クラス対応は今後の拡張）
+                const classObj = this.classes[0];
+                
+                assignments.push({
+                    subject,
+                    teacher,
+                    class: classObj
+                });
+            }
+        });
+
+        // ランダムに時間割に配置
+        const shuffledAssignments = this.shuffleArray([...assignments]);
+        
+        for (let day = 0; day < 5; day++) {
+            for (let period = 0; period < 6; period++) {
+                const key = `${day}-${period}`;
+                const assignmentIndex = day * 6 + period;
+                
+                if (assignmentIndex < shuffledAssignments.length) {
+                    this.schedule[key] = shuffledAssignments[assignmentIndex];
+                }
+            }
+        }
+
+        this.renderSchedule();
+        this.saveToStorage();
+        this.showMessage('時間割を生成しました');
+    }
+
+    shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    enableManualEdit() {
+        // 手動編集モードを有効にする（ドラッグ&ドロップ機能）
+        this.showMessage('手動編集モードは今後実装予定です', 'info');
+    }
+
+    // === 出力機能 ===
+    exportPNG() {
+        this.showMessage('PNG出力機能は今後実装予定です', 'info');
+    }
+
+    exportPDF() {
+        this.showMessage('PDF出力機能は今後実装予定です', 'info');
+    }
+
+    exportJSON() {
         const data = {
+            teachers: this.teachers,
+            classes: this.classes,
             subjects: this.subjects,
             schedule: this.schedule
         };
-        localStorage.setItem('timetable-data', JSON.stringify(data));
+        
+        this.downloadFile('timetable.json', JSON.stringify(data, null, 2), 'application/json');
+        this.showMessage('JSONファイルをダウンロードしました');
     }
 
-    loadFromStorage() {
-        const data = localStorage.getItem('timetable-data');
-        if (data) {
-            const parsed = JSON.parse(data);
-            this.subjects = parsed.subjects || [];
-            this.schedule = parsed.schedule || {};
-            this.renderSubjects();
-            this.renderSchedule();
+    exportCSV() {
+        this.showMessage('CSV出力機能は今後実装予定です', 'info');
+    }
+
+    exportExcel() {
+        this.showMessage('Excel出力機能は今後実装予定です', 'info');
+    }
+
+    exportProject() {
+        this.exportJSON();
+    }
+
+    importProject(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const data = JSON.parse(e.target.result);
+                
+                if (data.teachers && data.classes && data.subjects && data.schedule) {
+                    this.teachers = data.teachers;
+                    this.classes = data.classes;
+                    this.subjects = data.subjects;
+                    this.schedule = data.schedule;
+                    
+                    this.renderAllData();
+                    this.saveToStorage();
+                    this.showMessage('プロジェクトファイルを読み込みました');
+                } else {
+                    this.showMessage('無効なプロジェクトファイルです', 'error');
+                }
+            } catch (error) {
+                this.showMessage('ファイルの読み込みに失敗しました', 'error');
+            }
+        };
+        reader.readAsText(file);
+    }
+
+    updatePreview() {
+        const preview = document.getElementById('schedule-preview');
+        
+        if (Object.keys(this.schedule).length === 0) {
+            preview.innerHTML = '<p>時間割を生成してからプレビューが表示されます</p>';
+        } else {
+            // 簡単なテーブル形式でプレビューを表示
+            let html = '<table style="width: 100%; border-collapse: collapse;">';
+            html += '<tr><th></th><th>月</th><th>火</th><th>水</th><th>木</th><th>金</th></tr>';
+            
+            for (let period = 0; period < 6; period++) {
+                html += `<tr><th>${period + 1}限</th>`;
+                for (let day = 0; day < 5; day++) {
+                    const key = `${day}-${period}`;
+                    const assignment = this.schedule[key];
+                    const content = assignment ? assignment.subject.name : '-';
+                    html += `<td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${content}</td>`;
+                }
+                html += '</tr>';
+            }
+            html += '</table>';
+            preview.innerHTML = html;
         }
     }
 
-    clearSchedule() {
-        this.subjects = [];
-        this.schedule = {};
-        this.renderSubjects();
-        this.renderSchedule();
-        this.saveToStorage();
+    // === ユーティリティ機能 ===
+    clearTeacherForm() {
+        document.getElementById('teacher-name').value = '';
+        document.getElementById('teacher-subject').value = '';
+        document.getElementById('teacher-hours').value = '';
     }
 
-    showMessage(message) {
+    clearClassForm() {
+        document.getElementById('class-name').value = '';
+        document.getElementById('class-students').value = '';
+    }
+
+    clearSubjectForm() {
+        document.getElementById('subject-name').value = '';
+        document.getElementById('subject-hours').value = '';
+        document.getElementById('subject-color').value = '#4CAF50';
+    }
+
+    saveSettings() {
+        this.saveToStorage();
+        this.showMessage('設定を保存しました');
+    }
+
+    loadSettings() {
+        this.loadFromStorage();
+        this.renderAllData();
+        this.showMessage('設定を読み込みました');
+    }
+
+    resetSettings() {
+        if (confirm('すべての設定をリセットしますか？')) {
+            this.teachers = [];
+            this.classes = [];
+            this.subjects = [];
+            this.schedule = {};
+            this.renderAllData();
+            this.saveToStorage();
+            this.showMessage('設定をリセットしました');
+        }
+    }
+
+    saveToStorage() {
+        const data = {
+            teachers: this.teachers,
+            classes: this.classes,
+            subjects: this.subjects,
+            schedule: this.schedule
+        };
+        localStorage.setItem('timetable-generator-data', JSON.stringify(data));
+    }
+
+    loadFromStorage() {
+        const data = localStorage.getItem('timetable-generator-data');
+        if (data) {
+            const parsed = JSON.parse(data);
+            this.teachers = parsed.teachers || [];
+            this.classes = parsed.classes || [];
+            this.subjects = parsed.subjects || [];
+            this.schedule = parsed.schedule || {};
+        }
+    }
+
+    downloadFile(filename, content, contentType) {
+        const blob = new Blob([content], { type: contentType });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    showMessage(message, type = 'success') {
         const messageDiv = document.createElement('div');
         messageDiv.className = 'notification';
         messageDiv.textContent = message;
+        
+        if (type === 'error') {
+            messageDiv.style.backgroundColor = '#f44336';
+        } else if (type === 'info') {
+            messageDiv.style.backgroundColor = '#2196F3';
+        }
         
         document.body.appendChild(messageDiv);
         
@@ -263,19 +507,41 @@ class TimetableGenerator {
         setTimeout(() => {
             messageDiv.classList.remove('show');
             setTimeout(() => {
-                document.body.removeChild(messageDiv);
+                if (messageDiv.parentNode) {
+                    document.body.removeChild(messageDiv);
+                }
             }, 300);
-        }, 2000);
+        }, 3000);
     }
 }
 
-const timetable = new TimetableGenerator();
+// 通知のスタイル
+const style = document.createElement('style');
+style.textContent = `
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #4CAF50;
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 4px;
+    z-index: 10000;
+    opacity: 0;
+    transform: translateX(100%);
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
 
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-        timetable.closeModal();
-    }
-});
+.notification.show {
+    opacity: 1;
+    transform: translateX(0);
+}
+`;
+document.head.appendChild(style);
+
+// アプリケーションを初期化
+const timetable = new TimetableGenerator();
 
 document.addEventListener('DOMContentLoaded', () => {
     console.log('時間割ジェネレーターが初期化されました');
