@@ -35,6 +35,9 @@ class TimetableGenerator {
         document.getElementById('generate-schedule').addEventListener('click', () => this.generateSchedule());
         document.getElementById('manual-edit').addEventListener('click', () => this.enableManualEdit());
 
+        // フルスクリーン機能
+        document.getElementById('fullscreen-settings').addEventListener('click', () => this.toggleFullscreen('settings'));
+
         // 出力画面のイベント
         document.getElementById('export-png').addEventListener('click', () => this.exportPNG());
         document.getElementById('export-pdf').addEventListener('click', () => this.exportPDF());
@@ -386,6 +389,38 @@ class TimetableGenerator {
             }
         };
         reader.readAsText(file);
+    }
+
+    toggleFullscreen(tabName) {
+        const tab = document.getElementById(`${tabName}-tab`);
+        const header = document.querySelector('header');
+        
+        if (tab.classList.contains('fullscreen')) {
+            // フルスクリーンを終了
+            tab.classList.remove('fullscreen');
+            header.style.display = 'block';
+            
+            // フルスクリーンヘッダーを削除
+            const fullscreenHeader = tab.querySelector('.fullscreen-header');
+            if (fullscreenHeader) {
+                fullscreenHeader.remove();
+            }
+        } else {
+            // フルスクリーンに切り替え
+            tab.classList.add('fullscreen');
+            header.style.display = 'none';
+            
+            // フルスクリーンヘッダーを追加
+            const fullscreenHeader = document.createElement('div');
+            fullscreenHeader.className = 'fullscreen-header';
+            fullscreenHeader.innerHTML = `
+                <h1 class="fullscreen-title">設定画面</h1>
+                <button class="fullscreen-close" onclick="timetable.toggleFullscreen('${tabName}')">
+                    全画面表示を終了
+                </button>
+            `;
+            tab.insertBefore(fullscreenHeader, tab.firstChild);
+        }
     }
 
     updatePreview() {
