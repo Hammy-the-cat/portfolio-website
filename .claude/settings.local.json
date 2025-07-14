@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(start index.html)",
+      "Bash(start:*)",
+      "Bash(python:*)",
+      "Bash(ls:*)",
+      "Bash(node:*)",
+      "Bash(git add:*)",
+      "Bash(git push:*)",
+      "Bash(git remote set-url:*)",
+      "Bash(git rm:*)",
+      "Bash(git submodule:*)",
+      "Bash(rm:*)",
+      "Bash(git commit:*)"
+    ],
+    "deny": []
+  }
+}
