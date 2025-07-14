@@ -1,349 +1,293 @@
-// DOM読み込み完了後に実行
-document.addEventListener('DOMContentLoaded', function() {
-    // ナビゲーション機能
-    initNavigation();
-    
-    // スキルバーアニメーション
-    initSkillBars();
-    
-    // コンタクトフォーム機能
-    initContactForm();
-    
-    // スムーススクロール
-    initSmoothScroll();
-    
-    // パーティクル背景
-    initParticleBackground();
-    
-    // ヘッダースクロール効果
-    initHeaderScroll();
-});
+class TimetableGenerator {
+    constructor() {
+        this.subjects = [];
+        this.schedule = {};
+        this.draggedSubject = null;
+        this.init();
+    }
 
-// ナビゲーション機能
-function initNavigation() {
-    const navLinks = document.querySelectorAll('nav a[href^="#"]');
-    const sections = document.querySelectorAll('section');
-    
-    navLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
+    init() {
+        this.loadFromStorage();
+        this.setupEventListeners();
+        this.renderSubjects();
+        this.renderSchedule();
+    }
+
+    setupEventListeners() {
+        document.getElementById('addSubject').addEventListener('click', () => {
+            this.openModal();
+        });
+
+        document.getElementById('saveSchedule').addEventListener('click', () => {
+            this.saveToStorage();
+            this.showMessage('時間割を保存しました');
+        });
+
+        document.getElementById('loadSchedule').addEventListener('click', () => {
+            this.loadFromStorage();
+            this.showMessage('時間割を読み込みました');
+        });
+
+        document.getElementById('clearSchedule').addEventListener('click', () => {
+            if (confirm('時間割をクリアしますか？')) {
+                this.clearSchedule();
+                this.showMessage('時間割をクリアしました');
+            }
+        });
+
+        document.getElementById('subjectForm').addEventListener('submit', (e) => {
             e.preventDefault();
-            const targetId = this.getAttribute('href').substring(1);
-            showSection(targetId);
+            this.addSubject();
         });
-    });
-    
-    function showSection(targetId) {
-        sections.forEach(section => {
-            section.classList.remove('active');
+
+        document.querySelector('.close').addEventListener('click', () => {
+            this.closeModal();
         });
+
+        document.getElementById('subjectModal').addEventListener('click', (e) => {
+            if (e.target.id === 'subjectModal') {
+                this.closeModal();
+            }
+        });
+
+        this.setupDragAndDrop();
+    }
+
+    setupDragAndDrop() {
+        const cells = document.querySelectorAll('.schedule-cell');
         
-        const targetSection = document.getElementById(targetId);
-        if (targetSection) {
-            targetSection.classList.add('active');
-            
-            // スキルセクションが表示されたときにアニメーション実行
-            if (targetId === 'skills') {
-                animateSkillBars();
-            }
-        }
-    }
-}
-
-// スキルバーアニメーション
-function initSkillBars() {
-    const skillBars = document.querySelectorAll('.skill-progress');
-    
-    skillBars.forEach(bar => {
-        bar.style.width = '0%';
-    });
-}
-
-function animateSkillBars() {
-    const skillBars = document.querySelectorAll('.skill-progress');
-    
-    skillBars.forEach((bar, index) => {
-        const targetWidth = bar.getAttribute('data-width');
-        
-        setTimeout(() => {
-            bar.style.width = targetWidth + '%';
-        }, index * 200);
-    });
-}
-
-// コンタクトフォーム機能
-function initContactForm() {
-    const form = document.querySelector('.contact-form');
-    
-    if (form) {
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const formData = new FormData(form);
-            const name = formData.get('name');
-            const email = formData.get('email');
-            const message = formData.get('message');
-            
-            // 簡単なバリデーション
-            if (!name || !email || !message) {
-                showNotification('すべてのフィールドを入力してください。', 'error');
-                return;
-            }
-            
-            if (!isValidEmail(email)) {
-                showNotification('有効なメールアドレスを入力してください。', 'error');
-                return;
-            }
-            
-            // フォーム送信のシミュレーション
-            showNotification('メッセージを送信しました！', 'success');
-            form.reset();
-        });
-    }
-}
-
-// メールアドレスの妥当性チェック
-function isValidEmail(email) {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-}
-
-// 通知表示機能
-function showNotification(message, type = 'info') {
-    const notification = document.createElement('div');
-    notification.className = `notification ${type}`;
-    notification.textContent = message;
-    
-    // スタイル設定
-    notification.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        padding: 1rem 2rem;
-        border-radius: 8px;
-        color: white;
-        font-weight: 500;
-        z-index: 10000;
-        transform: translateX(100%);
-        transition: transform 0.3s ease;
-        max-width: 300px;
-    `;
-    
-    if (type === 'success') {
-        notification.style.background = 'linear-gradient(45deg, #4CAF50, #45a049)';
-    } else if (type === 'error') {
-        notification.style.background = 'linear-gradient(45deg, #f44336, #da190b)';
-    } else {
-        notification.style.background = 'linear-gradient(45deg, #00d4ff, #0099cc)';
-    }
-    
-    document.body.appendChild(notification);
-    
-    // アニメーション表示
-    setTimeout(() => {
-        notification.style.transform = 'translateX(0)';
-    }, 100);
-    
-    // 3秒後に非表示
-    setTimeout(() => {
-        notification.style.transform = 'translateX(100%)';
-        setTimeout(() => {
-            if (notification.parentNode) {
-                notification.parentNode.removeChild(notification);
-            }
-        }, 300);
-    }, 3000);
-}
-
-// スムーススクロール
-function initSmoothScroll() {
-    const ctaButton = document.querySelector('.cta-button');
-    
-    if (ctaButton) {
-        ctaButton.addEventListener('click', function(e) {
-            e.preventDefault();
-            const targetId = this.getAttribute('href').substring(1);
-            
-            // セクション切り替え
-            const sections = document.querySelectorAll('section');
-            sections.forEach(section => {
-                section.classList.remove('active');
+        cells.forEach(cell => {
+            cell.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                cell.classList.add('drag-over');
             });
-            
-            const targetSection = document.getElementById(targetId);
-            if (targetSection) {
-                targetSection.classList.add('active');
-            }
-        });
-    }
-}
 
-// パーティクル背景効果
-function initParticleBackground() {
-    const canvas = document.getElementById('background-canvas');
-    if (!canvas) return;
-    
-    // キャンバスを作成してパーティクル効果を追加
-    const particleCanvas = document.createElement('canvas');
-    particleCanvas.style.cssText = `
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        pointer-events: none;
-        z-index: -1;
-    `;
-    
-    const ctx = particleCanvas.getContext('2d');
-    let particles = [];
-    
-    function resizeCanvas() {
-        particleCanvas.width = window.innerWidth;
-        particleCanvas.height = window.innerHeight;
-    }
-    
-    function createParticle() {
-        return {
-            x: Math.random() * particleCanvas.width,
-            y: Math.random() * particleCanvas.height,
-            size: Math.random() * 2 + 1,
-            speedX: (Math.random() - 0.5) * 0.5,
-            speedY: (Math.random() - 0.5) * 0.5,
-            opacity: Math.random() * 0.5 + 0.2
-        };
-    }
-    
-    function initParticles() {
-        particles = [];
-        for (let i = 0; i < 50; i++) {
-            particles.push(createParticle());
-        }
-    }
-    
-    function updateParticles() {
-        particles.forEach(particle => {
-            particle.x += particle.speedX;
-            particle.y += particle.speedY;
-            
-            // 画面外に出たら反対側から出現
-            if (particle.x < 0) particle.x = particleCanvas.width;
-            if (particle.x > particleCanvas.width) particle.x = 0;
-            if (particle.y < 0) particle.y = particleCanvas.height;
-            if (particle.y > particleCanvas.height) particle.y = 0;
-        });
-    }
-    
-    function drawParticles() {
-        ctx.clearRect(0, 0, particleCanvas.width, particleCanvas.height);
-        
-        particles.forEach(particle => {
-            ctx.beginPath();
-            ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
-            ctx.fillStyle = `rgba(0, 212, 255, ${particle.opacity})`;
-            ctx.fill();
-        });
-        
-        // パーティクル間の線を描画
-        particles.forEach((particle, i) => {
-            particles.slice(i + 1).forEach(otherParticle => {
-                const distance = Math.sqrt(
-                    Math.pow(particle.x - otherParticle.x, 2) +
-                    Math.pow(particle.y - otherParticle.y, 2)
-                );
+            cell.addEventListener('dragleave', () => {
+                cell.classList.remove('drag-over');
+            });
+
+            cell.addEventListener('drop', (e) => {
+                e.preventDefault();
+                cell.classList.remove('drag-over');
                 
-                if (distance < 100) {
-                    ctx.beginPath();
-                    ctx.moveTo(particle.x, particle.y);
-                    ctx.lineTo(otherParticle.x, otherParticle.y);
-                    ctx.strokeStyle = `rgba(0, 212, 255, ${0.1 * (1 - distance / 100)})`;
-                    ctx.lineWidth = 1;
-                    ctx.stroke();
+                const day = parseInt(cell.dataset.day);
+                const period = parseInt(cell.dataset.period);
+                
+                if (this.draggedSubject) {
+                    this.placeSubject(this.draggedSubject, day, period);
+                    this.draggedSubject = null;
                 }
             });
         });
     }
-    
-    function animate() {
-        updateParticles();
-        drawParticles();
-        requestAnimationFrame(animate);
-    }
-    
-    // 初期化
-    resizeCanvas();
-    initParticles();
-    
-    // イベントリスナー
-    window.addEventListener('resize', () => {
-        resizeCanvas();
-        initParticles();
-    });
-    
-    // キャンバスをDOMに追加
-    canvas.parentNode.insertBefore(particleCanvas, canvas.nextSibling);
-    
-    // アニメーション開始
-    animate();
-}
 
-// ヘッダースクロール効果
-function initHeaderScroll() {
-    const header = document.querySelector('header');
-    let lastScrollY = window.scrollY;
-    
-    window.addEventListener('scroll', () => {
-        const currentScrollY = window.scrollY;
+    openModal() {
+        document.getElementById('subjectModal').style.display = 'block';
+        document.getElementById('subjectName').focus();
+    }
+
+    closeModal() {
+        document.getElementById('subjectModal').style.display = 'none';
+        document.getElementById('subjectForm').reset();
+    }
+
+    addSubject() {
+        const name = document.getElementById('subjectName').value.trim();
+        const teacher = document.getElementById('teacher').value.trim();
+        const classroom = document.getElementById('classroom').value.trim();
+        const color = document.getElementById('color').value;
+
+        if (!name) {
+            alert('科目名を入力してください');
+            return;
+        }
+
+        const subject = {
+            id: Date.now(),
+            name,
+            teacher,
+            classroom,
+            color
+        };
+
+        this.subjects.push(subject);
+        this.renderSubjects();
+        this.closeModal();
+        this.saveToStorage();
+        this.showMessage('科目を追加しました');
+    }
+
+    removeSubject(id) {
+        if (confirm('この科目を削除しますか？')) {
+            this.subjects = this.subjects.filter(subject => subject.id !== id);
+            
+            for (let key in this.schedule) {
+                if (this.schedule[key] && this.schedule[key].id === id) {
+                    delete this.schedule[key];
+                }
+            }
+            
+            this.renderSubjects();
+            this.renderSchedule();
+            this.saveToStorage();
+            this.showMessage('科目を削除しました');
+        }
+    }
+
+    placeSubject(subject, day, period) {
+        const key = `${day}-${period}`;
         
-        if (currentScrollY > lastScrollY && currentScrollY > 100) {
-            // 下スクロール時は隠す
-            header.style.transform = 'translateY(-100%)';
-        } else {
-            // 上スクロール時は表示
-            header.style.transform = 'translateY(0)';
+        if (this.schedule[key]) {
+            if (!confirm('既に科目が配置されています。上書きしますか？')) {
+                return;
+            }
         }
         
-        lastScrollY = currentScrollY;
-    });
+        this.schedule[key] = subject;
+        this.renderSchedule();
+        this.saveToStorage();
+    }
+
+    removeFromSchedule(day, period) {
+        const key = `${day}-${period}`;
+        delete this.schedule[key];
+        this.renderSchedule();
+        this.saveToStorage();
+    }
+
+    renderSubjects() {
+        const container = document.getElementById('subjectList');
+        container.innerHTML = '';
+
+        this.subjects.forEach(subject => {
+            const element = document.createElement('div');
+            element.className = 'subject-item';
+            element.style.borderLeftColor = subject.color;
+            element.draggable = true;
+            
+            element.innerHTML = `
+                <div class="subject-item-name">${subject.name}</div>
+                <div class="subject-item-details">
+                    ${subject.teacher ? `担当: ${subject.teacher}` : ''}
+                    ${subject.classroom ? `教室: ${subject.classroom}` : ''}
+                </div>
+                <div class="subject-item-actions">
+                    <button onclick="timetable.removeSubject(${subject.id})">削除</button>
+                </div>
+            `;
+
+            element.addEventListener('dragstart', (e) => {
+                this.draggedSubject = subject;
+                element.classList.add('dragging');
+            });
+
+            element.addEventListener('dragend', () => {
+                element.classList.remove('dragging');
+            });
+
+            container.appendChild(element);
+        });
+    }
+
+    renderSchedule() {
+        const cells = document.querySelectorAll('.schedule-cell');
+        
+        cells.forEach(cell => {
+            const day = parseInt(cell.dataset.day);
+            const period = parseInt(cell.dataset.period);
+            const key = `${day}-${period}`;
+            const subject = this.schedule[key];
+            
+            if (subject) {
+                cell.classList.add('has-subject');
+                cell.style.backgroundColor = subject.color;
+                cell.innerHTML = `
+                    <div class="subject-content">
+                        <div class="subject-name">${subject.name}</div>
+                        <div class="subject-details">
+                            ${subject.teacher ? subject.teacher : ''}
+                            ${subject.classroom ? `<br>${subject.classroom}` : ''}
+                        </div>
+                    </div>
+                `;
+                
+                cell.addEventListener('dblclick', () => {
+                    this.removeFromSchedule(day, period);
+                });
+            } else {
+                cell.classList.remove('has-subject');
+                cell.style.backgroundColor = '';
+                cell.innerHTML = '';
+            }
+        });
+    }
+
+    saveToStorage() {
+        const data = {
+            subjects: this.subjects,
+            schedule: this.schedule
+        };
+        localStorage.setItem('timetable-data', JSON.stringify(data));
+    }
+
+    loadFromStorage() {
+        const data = localStorage.getItem('timetable-data');
+        if (data) {
+            const parsed = JSON.parse(data);
+            this.subjects = parsed.subjects || [];
+            this.schedule = parsed.schedule || {};
+            this.renderSubjects();
+            this.renderSchedule();
+        }
+    }
+
+    clearSchedule() {
+        this.subjects = [];
+        this.schedule = {};
+        this.renderSubjects();
+        this.renderSchedule();
+        this.saveToStorage();
+    }
+
+    showMessage(message) {
+        const messageDiv = document.createElement('div');
+        messageDiv.textContent = message;
+        messageDiv.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #4CAF50;
+            color: white;
+            padding: 1rem;
+            border-radius: 4px;
+            z-index: 10000;
+            opacity: 0;
+            transition: opacity 0.3s;
+        `;
+        
+        document.body.appendChild(messageDiv);
+        
+        setTimeout(() => {
+            messageDiv.style.opacity = '1';
+        }, 100);
+        
+        setTimeout(() => {
+            messageDiv.style.opacity = '0';
+            setTimeout(() => {
+                document.body.removeChild(messageDiv);
+            }, 300);
+        }, 2000);
+    }
 }
 
-// プロジェクトカードのホバー効果
-document.addEventListener('DOMContentLoaded', function() {
-    const projectCards = document.querySelectorAll('.project-card');
-    
-    projectCards.forEach(card => {
-        card.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-10px) scale(1.02)';
-        });
-        
-        card.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateY(0) scale(1)';
-        });
-    });
+const timetable = new TimetableGenerator();
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        timetable.closeModal();
+    }
 });
 
-// タイピングアニメーション効果
-function initTypingAnimation() {
-    const typingElements = document.querySelectorAll('.typing-text');
-    
-    typingElements.forEach(element => {
-        const text = element.textContent;
-        element.textContent = '';
-        
-        let i = 0;
-        const typeInterval = setInterval(() => {
-            element.textContent += text.charAt(i);
-            i++;
-            
-            if (i >= text.length) {
-                clearInterval(typeInterval);
-            }
-        }, 100);
-    });
-}
-
-// ページ読み込み時の初期アニメーション
-window.addEventListener('load', function() {
-    setTimeout(() => {
-        initTypingAnimation();
-    }, 500);
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('時間割ジェネレーターが初期化されました');
 });

@@ -3,246 +3,115 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ポートフォリオ - あなたの名前</title>
+    <title>時間割ジェネレーター</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Noto+Sans+JP:wght@300;400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div id="background-canvas"></div>
-    
     <header>
-        <div class="header-logo">Portfolio</div>
-        <nav>
-            <ul>
-                <li><a href="#home">ホーム</a></li>
-                <li><a href="#about">自己紹介</a></li>
-                <li><a href="#skills">スキル</a></li>
-                <li><a href="#projects">プロジェクト</a></li>
-                <li><a href="#contact">お問い合わせ</a></li>
-            </ul>
-        </nav>
+        <h1>時間割ジェネレーター</h1>
+        <div class="controls">
+            <button id="addSubject">科目追加</button>
+            <button id="saveSchedule">保存</button>
+            <button id="loadSchedule">読み込み</button>
+            <button id="clearSchedule">クリア</button>
+        </div>
     </header>
 
     <main>
-        <section id="home" class="active">
-            <div class="hero-content">
-                <h1>ようこそ！</h1>
-                <h2 class="typing-text">私のポートフォリオサイトへ</h2>
-                <p>創造性と技術を融合させ、革新的なソリューションを提供するデベロッパーです。</p>
-                <a href="#projects" class="cta-button">プロジェクトを見る</a>
+        <div class="schedule-container">
+            <div class="time-labels">
+                <div class="time-header"></div>
+                <div class="time-slot">1限<br>9:00-10:30</div>
+                <div class="time-slot">2限<br>10:40-12:10</div>
+                <div class="time-slot">3限<br>13:00-14:30</div>
+                <div class="time-slot">4限<br>14:40-16:10</div>
+                <div class="time-slot">5限<br>16:20-17:50</div>
+                <div class="time-slot">6限<br>18:00-19:30</div>
             </div>
-        </section>
 
-        <section id="about">
-            <div class="section-container">
-                <h2>自己紹介</h2>
-                <div class="about-content">
-                    <div class="about-text">
-                        <p>こんにちは！フロントエンド開発を専門とするデベロッパーです。</p>
-                        <p>ユーザーエクスペリエンスを重視し、美しく機能的なWebアプリケーションの開発に情熱を注いでいます。</p>
-                        <p>常に新しい技術を学び、クリエイティブな問題解決に取り組んでいます。</p>
-                    </div>
-                    <div class="about-stats">
-                        <div class="stat-item">
-                            <div class="stat-number">3+</div>
-                            <div class="stat-label">年の経験</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-number">50+</div>
-                            <div class="stat-label">完成プロジェクト</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-number">10+</div>
-                            <div class="stat-label">技術スタック</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
+            <div class="schedule-grid">
+                <div class="day-header">月</div>
+                <div class="day-header">火</div>
+                <div class="day-header">水</div>
+                <div class="day-header">木</div>
+                <div class="day-header">金</div>
 
-        <section id="skills">
-            <div class="section-container">
-                <h2>スキル</h2>
-                <div class="skills-grid">
-                    <div class="skill-category">
-                        <h3>フロントエンド</h3>
-                        <div class="skill-items">
-                            <div class="skill-item">
-                                <span class="skill-name">HTML/CSS</span>
-                                <div class="skill-bar">
-                                    <div class="skill-progress" data-width="90"></div>
-                                </div>
-                            </div>
-                            <div class="skill-item">
-                                <span class="skill-name">JavaScript</span>
-                                <div class="skill-bar">
-                                    <div class="skill-progress" data-width="85"></div>
-                                </div>
-                            </div>
-                            <div class="skill-item">
-                                <span class="skill-name">React</span>
-                                <div class="skill-bar">
-                                    <div class="skill-progress" data-width="80"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="skill-category">
-                        <h3>バックエンド</h3>
-                        <div class="skill-items">
-                            <div class="skill-item">
-                                <span class="skill-name">Node.js</span>
-                                <div class="skill-bar">
-                                    <div class="skill-progress" data-width="75"></div>
-                                </div>
-                            </div>
-                            <div class="skill-item">
-                                <span class="skill-name">Python</span>
-                                <div class="skill-bar">
-                                    <div class="skill-progress" data-width="70"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="skill-category">
-                        <h3>その他</h3>
-                        <div class="skill-items">
-                            <div class="skill-item">
-                                <span class="skill-name">Git</span>
-                                <div class="skill-bar">
-                                    <div class="skill-progress" data-width="85"></div>
-                                </div>
-                            </div>
-                            <div class="skill-item">
-                                <span class="skill-name">デザイン</span>
-                                <div class="skill-bar">
-                                    <div class="skill-progress" data-width="75"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
+                <!-- 1限 -->
+                <div class="schedule-cell" data-day="0" data-period="0"></div>
+                <div class="schedule-cell" data-day="1" data-period="0"></div>
+                <div class="schedule-cell" data-day="2" data-period="0"></div>
+                <div class="schedule-cell" data-day="3" data-period="0"></div>
+                <div class="schedule-cell" data-day="4" data-period="0"></div>
 
-        <section id="projects">
-            <div class="section-container">
-                <h2>プロジェクト</h2>
-                <div class="projects-grid">
-                    <div class="project-card">
-                        <div class="project-image">
-                            <img src="hammy/images/elice.png" alt="Elice FX-01プロジェクト">
-                        </div>
-                        <div class="project-content">
-                            <h3>Elice FX-01</h3>
-                            <p>未来から来たFX講師AIのWebサイト。インタラクティブなUIとアニメーション効果を実装。</p>
-                            <div class="project-tech">
-                                <span class="tech-tag">HTML</span>
-                                <span class="tech-tag">CSS</span>
-                                <span class="tech-tag">JavaScript</span>
-                            </div>
-                            <div class="project-links">
-                                <a href="hammy/index.html" target="_blank" class="project-link">デモを見る</a>
-                                <a href="#" class="project-link">コードを見る</a>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="project-card">
-                        <div class="project-image">
-                            <div class="placeholder-image">プロジェクト 2</div>
-                        </div>
-                        <div class="project-content">
-                            <h3>プロジェクト名 2</h3>
-                            <p>ここにプロジェクトの説明を記載します。技術的な特徴や工夫した点を説明。</p>
-                            <div class="project-tech">
-                                <span class="tech-tag">React</span>
-                                <span class="tech-tag">Node.js</span>
-                                <span class="tech-tag">MongoDB</span>
-                            </div>
-                            <div class="project-links">
-                                <a href="#" class="project-link">デモを見る</a>
-                                <a href="#" class="project-link">コードを見る</a>
-                            </div>
-                        </div>
-                    </div>
+                <!-- 2限 -->
+                <div class="schedule-cell" data-day="0" data-period="1"></div>
+                <div class="schedule-cell" data-day="1" data-period="1"></div>
+                <div class="schedule-cell" data-day="2" data-period="1"></div>
+                <div class="schedule-cell" data-day="3" data-period="1"></div>
+                <div class="schedule-cell" data-day="4" data-period="1"></div>
 
-                    <div class="project-card">
-                        <div class="project-image">
-                            <div class="placeholder-image">プロジェクト 3</div>
-                        </div>
-                        <div class="project-content">
-                            <h3>プロジェクト名 3</h3>
-                            <p>ここにプロジェクトの説明を記載します。技術的な特徴や工夫した点を説明。</p>
-                            <div class="project-tech">
-                                <span class="tech-tag">Vue.js</span>
-                                <span class="tech-tag">Express</span>
-                                <span class="tech-tag">PostgreSQL</span>
-                            </div>
-                            <div class="project-links">
-                                <a href="#" class="project-link">デモを見る</a>
-                                <a href="#" class="project-link">コードを見る</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
+                <!-- 3限 -->
+                <div class="schedule-cell" data-day="0" data-period="2"></div>
+                <div class="schedule-cell" data-day="1" data-period="2"></div>
+                <div class="schedule-cell" data-day="2" data-period="2"></div>
+                <div class="schedule-cell" data-day="3" data-period="2"></div>
+                <div class="schedule-cell" data-day="4" data-period="2"></div>
 
-        <section id="contact">
-            <div class="section-container">
-                <h2>お問い合わせ</h2>
-                <div class="contact-content">
-                    <div class="contact-info">
-                        <h3>お気軽にご連絡ください</h3>
-                        <p>プロジェクトのご相談や協業のお話など、どんなことでもお聞かせください。</p>
-                        <div class="contact-methods">
-                            <div class="contact-method">
-                                <span class="contact-icon">📧</span>
-                                <span>your.email@example.com</span>
-                            </div>
-                            <div class="contact-method">
-                                <span class="contact-icon">📱</span>
-                                <span>090-1234-5678</span>
-                            </div>
-                            <div class="contact-method">
-                                <span class="contact-icon">🌐</span>
-                                <span>github.com/yourusername</span>
-                            </div>
-                        </div>
-                    </div>
-                    <form class="contact-form">
-                        <div class="form-group">
-                            <label for="name">お名前</label>
-                            <input type="text" id="name" name="name" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="email">メールアドレス</label>
-                            <input type="email" id="email" name="email" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="message">メッセージ</label>
-                            <textarea id="message" name="message" rows="5" required></textarea>
-                        </div>
-                        <button type="submit" class="submit-button">送信する</button>
-                    </form>
-                </div>
-            </div>
-        </section>
-    </main>
+                <!-- 4限 -->
+                <div class="schedule-cell" data-day="0" data-period="3"></div>
+                <div class="schedule-cell" data-day="1" data-period="3"></div>
+                <div class="schedule-cell" data-day="2" data-period="3"></div>
+                <div class="schedule-cell" data-day="3" data-period="3"></div>
+                <div class="schedule-cell" data-day="4" data-period="3"></div>
 
-    <footer>
-        <div class="footer-content">
-            <p>&copy; 2025 Your Name. All rights reserved.</p>
-            <div class="social-links">
-                <a href="#" class="social-link">GitHub</a>
-                <a href="#" class="social-link">LinkedIn</a>
-                <a href="#" class="social-link">Twitter</a>
+                <!-- 5限 -->
+                <div class="schedule-cell" data-day="0" data-period="4"></div>
+                <div class="schedule-cell" data-day="1" data-period="4"></div>
+                <div class="schedule-cell" data-day="2" data-period="4"></div>
+                <div class="schedule-cell" data-day="3" data-period="4"></div>
+                <div class="schedule-cell" data-day="4" data-period="4"></div>
+
+                <!-- 6限 -->
+                <div class="schedule-cell" data-day="0" data-period="5"></div>
+                <div class="schedule-cell" data-day="1" data-period="5"></div>
+                <div class="schedule-cell" data-day="2" data-period="5"></div>
+                <div class="schedule-cell" data-day="3" data-period="5"></div>
+                <div class="schedule-cell" data-day="4" data-period="5"></div>
             </div>
         </div>
-    </footer>
+
+        <div class="subject-panel">
+            <h2>科目一覧</h2>
+            <div id="subjectList"></div>
+        </div>
+    </main>
+
+    <!-- 科目追加モーダル -->
+    <div id="subjectModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>科目を追加</h2>
+            <form id="subjectForm">
+                <div class="form-group">
+                    <label for="subjectName">科目名:</label>
+                    <input type="text" id="subjectName" required>
+                </div>
+                <div class="form-group">
+                    <label for="teacher">担当教員:</label>
+                    <input type="text" id="teacher">
+                </div>
+                <div class="form-group">
+                    <label for="classroom">教室:</label>
+                    <input type="text" id="classroom">
+                </div>
+                <div class="form-group">
+                    <label for="color">色:</label>
+                    <input type="color" id="color" value="#4CAF50">
+                </div>
+                <button type="submit">追加</button>
+            </form>
+        </div>
+    </div>
 
     <script src="script.js"></script>
 </body>
