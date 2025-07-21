@@ -131,16 +131,100 @@
                     </div>
                 </div>
 
-                <!-- 教科設定 -->
+                <!-- 特別支援教科設定 -->
                 <div class="settings-section">
-                    <h2>教科情報</h2>
-                    <div class="form-row">
-                        <input type="text" id="subject-name" placeholder="教科名">
-                        <input type="number" id="subject-hours" placeholder="週授業時間数" min="1" max="10">
-                        <input type="color" id="subject-color" value="#4CAF50">
-                        <button id="add-subject">追加</button>
+                    <h2>特別支援教育 教科時数設定</h2>
+                    <div class="special-support-config">
+                        <div class="config-header">
+                            <p class="config-description">
+                                特別支援学級における各教科の週当たり授業時数を設定できます。<br>
+                                通常学級とは異なる時数配分が可能です。
+                            </p>
+                        </div>
+                        
+                        <div class="subject-config-grid">
+                            <div class="subject-config-item">
+                                <label class="subject-label">国語</label>
+                                <input type="number" id="special-kokugo" class="hours-input" min="0" max="10" value="4" placeholder="週時数">
+                                <span class="hours-unit">時間/週</span>
+                            </div>
+                            <div class="subject-config-item">
+                                <label class="subject-label">社会</label>
+                                <input type="number" id="special-shakai" class="hours-input" min="0" max="10" value="2" placeholder="週時数">
+                                <span class="hours-unit">時間/週</span>
+                            </div>
+                            <div class="subject-config-item">
+                                <label class="subject-label">数学</label>
+                                <input type="number" id="special-sugaku" class="hours-input" min="0" max="10" value="4" placeholder="週時数">
+                                <span class="hours-unit">時間/週</span>
+                            </div>
+                            <div class="subject-config-item">
+                                <label class="subject-label">理科</label>
+                                <input type="number" id="special-rika" class="hours-input" min="0" max="10" value="2" placeholder="週時数">
+                                <span class="hours-unit">時間/週</span>
+                            </div>
+                            <div class="subject-config-item">
+                                <label class="subject-label">音楽</label>
+                                <input type="number" id="special-ongaku" class="hours-input" min="0" max="10" value="2" placeholder="週時数">
+                                <span class="hours-unit">時間/週</span>
+                            </div>
+                            <div class="subject-config-item">
+                                <label class="subject-label">美術</label>
+                                <input type="number" id="special-bijutsu" class="hours-input" min="0" max="10" value="1" placeholder="週時数">
+                                <span class="hours-unit">時間/週</span>
+                            </div>
+                            <div class="subject-config-item">
+                                <label class="subject-label">保健体育</label>
+                                <input type="number" id="special-taiiku" class="hours-input" min="0" max="10" value="3" placeholder="週時数">
+                                <span class="hours-unit">時間/週</span>
+                            </div>
+                            <div class="subject-config-item">
+                                <label class="subject-label">技術・家庭</label>
+                                <input type="number" id="special-gijutsu" class="hours-input" min="0" max="10" value="2" placeholder="週時数">
+                                <span class="hours-unit">時間/週</span>
+                            </div>
+                            <div class="subject-config-item">
+                                <label class="subject-label">外国語</label>
+                                <input type="number" id="special-gaikokugo" class="hours-input" min="0" max="10" value="3" placeholder="週時数">
+                                <span class="hours-unit">時間/週</span>
+                            </div>
+                            <div class="subject-config-item">
+                                <label class="subject-label">道徳</label>
+                                <input type="number" id="special-doutoku" class="hours-input" min="0" max="10" value="1" placeholder="週時数">
+                                <span class="hours-unit">時間/週</span>
+                            </div>
+                            <div class="subject-config-item">
+                                <label class="subject-label">総合的な学習の時間</label>
+                                <input type="number" id="special-sougou" class="hours-input" min="0" max="10" value="2" placeholder="週時数">
+                                <span class="hours-unit">時間/週</span>
+                            </div>
+                            <div class="subject-config-item">
+                                <label class="subject-label">特別活動</label>
+                                <input type="number" id="special-tokkatsu" class="hours-input" min="0" max="10" value="1" placeholder="週時数">
+                                <span class="hours-unit">時間/週</span>
+                            </div>
+                            <div class="subject-config-item special-subject">
+                                <label class="subject-label">自立活動</label>
+                                <input type="number" id="special-jiritsu" class="hours-input" min="0" max="10" value="2" placeholder="週時数">
+                                <span class="hours-unit">時間/週</span>
+                            </div>
+                            <div class="subject-config-item special-subject">
+                                <label class="subject-label">作業学習</label>
+                                <input type="number" id="special-sagyou" class="hours-input" min="0" max="10" value="3" placeholder="週時数">
+                                <span class="hours-unit">時間/週</span>
+                            </div>
+                        </div>
+                        
+                        <div class="config-actions">
+                            <div class="total-hours">
+                                <span>合計時数: </span>
+                                <span id="total-hours-display" class="total-number">30</span>
+                                <span>時間/週</span>
+                            </div>
+                            <button id="save-special-config" class="primary-button">特別支援時数設定を保存</button>
+                            <button id="reset-special-config" class="secondary-button">デフォルトに戻す</button>
+                        </div>
                     </div>
-                    <div id="subjects-list" class="data-list"></div>
                 </div>
 
                 <div class="settings-actions">
@@ -331,8 +415,11 @@
                 
                 // 安全にイベントリスナーを追加
                 this.safeAddEventListener('add-teacher', 'click', () => this.addTeacher());
-                this.safeAddEventListener('add-subject', 'click', () => this.addSubject());
                 this.safeAddEventListener('init-default-classes', 'click', () => this.initializeDefaultClasses());
+                
+                // 特別支援教科設定
+                this.safeAddEventListener('save-special-config', 'click', () => this.saveSpecialSupportConfig());
+                this.safeAddEventListener('reset-special-config', 'click', () => this.resetSpecialSupportConfig());
                 
                 // 学年別クラス追加
                 this.safeAddEventListener('add-grade-1', 'click', () => {
@@ -353,6 +440,7 @@
                 // 初期表示時にクラスオプションを更新
                 setTimeout(() => {
                     this.updateClassOptions();
+                    this.setupSpecialSupportCalculator();
                 }, 300);
             }
 
@@ -562,6 +650,90 @@
                     row.style.display = 'none';
                     document.getElementById(`teacher-subject-${rowNumber}`).value = '';
                     document.getElementById(`teacher-hours-${rowNumber}`).value = '';
+                }
+            }
+
+            // 特別支援教科設定
+            setupSpecialSupportCalculator() {
+                const inputs = document.querySelectorAll('.hours-input');
+                inputs.forEach(input => {
+                    input.addEventListener('input', () => this.updateTotalHours());
+                });
+                this.updateTotalHours();
+                this.loadSpecialSupportConfig();
+            }
+
+            updateTotalHours() {
+                const inputs = document.querySelectorAll('.hours-input');
+                let total = 0;
+                inputs.forEach(input => {
+                    const value = parseInt(input.value) || 0;
+                    total += value;
+                });
+                
+                const display = document.getElementById('total-hours-display');
+                if (display) {
+                    display.textContent = total;
+                    
+                    // 30時間を基準に色を変更
+                    if (total === 30) {
+                        display.style.color = 'var(--neon-green)';
+                    } else if (total > 30) {
+                        display.style.color = 'var(--neon-pink)';
+                    } else {
+                        display.style.color = 'var(--neon-orange)';
+                    }
+                }
+            }
+
+            saveSpecialSupportConfig() {
+                const config = {};
+                const inputs = document.querySelectorAll('.hours-input');
+                
+                inputs.forEach(input => {
+                    const subjectKey = input.id.replace('special-', '');
+                    config[subjectKey] = parseInt(input.value) || 0;
+                });
+                
+                localStorage.setItem('special-support-config', JSON.stringify(config));
+                this.uiManager.showNotification('特別支援教科設定を保存しました');
+            }
+
+            loadSpecialSupportConfig() {
+                const savedConfig = localStorage.getItem('special-support-config');
+                if (savedConfig) {
+                    const config = JSON.parse(savedConfig);
+                    
+                    Object.keys(config).forEach(key => {
+                        const input = document.getElementById(`special-${key}`);
+                        if (input) {
+                            input.value = config[key];
+                        }
+                    });
+                    
+                    this.updateTotalHours();
+                }
+            }
+
+            resetSpecialSupportConfig() {
+                if (confirm('特別支援教科設定をデフォルトに戻しますか？')) {
+                    // デフォルト値に戻す
+                    const defaults = {
+                        'kokugo': 4, 'shakai': 2, 'sugaku': 4, 'rika': 2,
+                        'ongaku': 2, 'bijutsu': 1, 'taiiku': 3, 'gijutsu': 2,
+                        'gaikokugo': 3, 'doutoku': 1, 'sougou': 2, 'tokkatsu': 1,
+                        'jiritsu': 2, 'sagyou': 3
+                    };
+                    
+                    Object.keys(defaults).forEach(key => {
+                        const input = document.getElementById(`special-${key}`);
+                        if (input) {
+                            input.value = defaults[key];
+                        }
+                    });
+                    
+                    this.updateTotalHours();
+                    this.uiManager.showNotification('デフォルト設定に戻しました');
                 }
             }
 

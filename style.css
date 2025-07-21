@@ -1149,6 +1149,156 @@ header h1 {
     box-shadow: 0 0 8px rgba(255, 0, 128, 0.5);
 }
 
+/* 特別支援教科設定のスタイル */
+.special-support-config {
+    padding: 1.5rem;
+    background: rgba(255, 128, 0, 0.02);
+    border: 1px solid var(--neon-orange);
+    border-radius: 12px;
+    margin: 1rem 0;
+}
+
+.config-header {
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.config-description {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin: 0;
+    font-family: 'Rajdhani', sans-serif;
+}
+
+.subject-config-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.subject-config-item {
+    display: flex;
+    align-items: center;
+    padding: 0.8rem;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-secondary);
+    border-radius: 8px;
+    gap: 1rem;
+    transition: all 0.3s ease;
+}
+
+.subject-config-item:hover {
+    border-color: var(--neon-orange);
+    box-shadow: 0 0 8px rgba(255, 128, 0, 0.2);
+}
+
+.subject-config-item.special-subject {
+    border-color: var(--neon-purple);
+    background: rgba(128, 0, 255, 0.03);
+}
+
+.subject-config-item.special-subject:hover {
+    border-color: var(--neon-purple);
+    box-shadow: 0 0 8px rgba(128, 0, 255, 0.3);
+}
+
+.subject-label {
+    flex: 2;
+    color: var(--text-primary);
+    font-family: 'Orbitron', monospace;
+    font-weight: 500;
+    font-size: 0.9rem;
+    min-width: 120px;
+}
+
+.special-subject .subject-label {
+    color: var(--neon-purple);
+}
+
+.hours-input {
+    flex: 1;
+    padding: 0.6rem;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-secondary);
+    border-radius: 4px;
+    color: var(--text-primary);
+    text-align: center;
+    font-family: 'Orbitron', monospace;
+    font-weight: 600;
+    font-size: 1rem;
+    min-width: 60px;
+    max-width: 80px;
+}
+
+.hours-input:focus {
+    outline: none;
+    border-color: var(--neon-orange);
+    box-shadow: 0 0 8px rgba(255, 128, 0, 0.3);
+}
+
+.special-subject .hours-input:focus {
+    border-color: var(--neon-purple);
+    box-shadow: 0 0 8px rgba(128, 0, 255, 0.3);
+}
+
+.hours-unit {
+    flex: 1;
+    color: var(--text-secondary);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.85rem;
+    min-width: 70px;
+}
+
+.config-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    background: rgba(255, 128, 0, 0.05);
+    border-radius: 8px;
+    border: 1px solid var(--neon-orange);
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.total-hours {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: 'Orbitron', monospace;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.total-number {
+    font-size: 1.2rem;
+    color: var(--neon-orange);
+    text-shadow: 0 0 8px rgba(255, 128, 0, 0.5);
+}
+
+@media (max-width: 768px) {
+    .subject-config-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .config-actions {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .subject-config-item {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.5rem;
+    }
+    
+    .subject-label {
+        min-width: auto;
+    }
+}
+
 /* 通知システム */
 .notification {
     position: fixed;
