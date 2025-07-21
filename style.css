@@ -1171,6 +1171,65 @@ header h1 {
     font-family: 'Rajdhani', sans-serif;
 }
 
+/* クラス選択セクション */
+.class-selection-section {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: rgba(0, 255, 255, 0.03);
+    border: 1px solid var(--neon-cyan);
+    border-radius: 8px;
+}
+
+.class-selection-section h3 {
+    color: var(--neon-cyan);
+    font-family: 'Orbitron', monospace;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
+
+.class-selector {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.class-select-dropdown {
+    flex: 1;
+    min-width: 250px;
+    padding: 0.8rem;
+    background: var(--bg-secondary);
+    border: 1px solid var(--neon-cyan);
+    border-radius: 6px;
+    color: var(--text-primary);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1rem;
+}
+
+.class-select-dropdown:focus {
+    outline: none;
+    border-color: var(--neon-blue);
+    box-shadow: 0 0 8px rgba(0, 128, 255, 0.3);
+}
+
+/* 時数設定セクション */
+.hours-config-section {
+    padding: 1.5rem;
+    background: rgba(128, 0, 255, 0.02);
+    border: 1px solid var(--neon-purple);
+    border-radius: 8px;
+    margin-top: 1rem;
+}
+
+.hours-config-section h3 {
+    color: var(--neon-purple);
+    font-family: 'Orbitron', monospace;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    font-size: 1.1rem;
+}
+
 .subject-config-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -1276,6 +1335,16 @@ header h1 {
     font-size: 1.2rem;
     color: var(--neon-orange);
     text-shadow: 0 0 8px rgba(255, 128, 0, 0.5);
+}
+
+.total-number.warning {
+    color: var(--neon-pink);
+    text-shadow: 0 0 8px rgba(255, 0, 128, 0.5);
+}
+
+.total-number.good {
+    color: var(--neon-green);
+    text-shadow: 0 0 8px rgba(0, 255, 65, 0.5);
 }
 
 @media (max-width: 768px) {

@@ -131,98 +131,114 @@
                     </div>
                 </div>
 
-                <!-- 特別支援教科設定 -->
+                <!-- 特別支援教育 クラス別時数設定 -->
                 <div class="settings-section">
-                    <h2>特別支援教育 教科時数設定</h2>
+                    <h2>特別支援教育 クラス別時数設定</h2>
                     <div class="special-support-config">
                         <div class="config-header">
                             <p class="config-description">
-                                特別支援学級における各教科の週当たり授業時数を設定できます。<br>
-                                通常学級とは異なる時数配分が可能です。
+                                特別支援学級ごとに各教科の週当たり授業時数を設定できます。<br>
+                                クラスを選択して、そのクラス専用の時数配分を設定してください。
                             </p>
                         </div>
                         
-                        <div class="subject-config-grid">
-                            <div class="subject-config-item">
-                                <label class="subject-label">国語</label>
-                                <input type="number" id="special-kokugo" class="hours-input" min="0" max="10" value="4" placeholder="週時数">
-                                <span class="hours-unit">時間/週</span>
-                            </div>
-                            <div class="subject-config-item">
-                                <label class="subject-label">社会</label>
-                                <input type="number" id="special-shakai" class="hours-input" min="0" max="10" value="2" placeholder="週時数">
-                                <span class="hours-unit">時間/週</span>
-                            </div>
-                            <div class="subject-config-item">
-                                <label class="subject-label">数学</label>
-                                <input type="number" id="special-sugaku" class="hours-input" min="0" max="10" value="4" placeholder="週時数">
-                                <span class="hours-unit">時間/週</span>
-                            </div>
-                            <div class="subject-config-item">
-                                <label class="subject-label">理科</label>
-                                <input type="number" id="special-rika" class="hours-input" min="0" max="10" value="2" placeholder="週時数">
-                                <span class="hours-unit">時間/週</span>
-                            </div>
-                            <div class="subject-config-item">
-                                <label class="subject-label">音楽</label>
-                                <input type="number" id="special-ongaku" class="hours-input" min="0" max="10" value="2" placeholder="週時数">
-                                <span class="hours-unit">時間/週</span>
-                            </div>
-                            <div class="subject-config-item">
-                                <label class="subject-label">美術</label>
-                                <input type="number" id="special-bijutsu" class="hours-input" min="0" max="10" value="1" placeholder="週時数">
-                                <span class="hours-unit">時間/週</span>
-                            </div>
-                            <div class="subject-config-item">
-                                <label class="subject-label">保健体育</label>
-                                <input type="number" id="special-taiiku" class="hours-input" min="0" max="10" value="3" placeholder="週時数">
-                                <span class="hours-unit">時間/週</span>
-                            </div>
-                            <div class="subject-config-item">
-                                <label class="subject-label">技術・家庭</label>
-                                <input type="number" id="special-gijutsu" class="hours-input" min="0" max="10" value="2" placeholder="週時数">
-                                <span class="hours-unit">時間/週</span>
-                            </div>
-                            <div class="subject-config-item">
-                                <label class="subject-label">外国語</label>
-                                <input type="number" id="special-gaikokugo" class="hours-input" min="0" max="10" value="3" placeholder="週時数">
-                                <span class="hours-unit">時間/週</span>
-                            </div>
-                            <div class="subject-config-item">
-                                <label class="subject-label">道徳</label>
-                                <input type="number" id="special-doutoku" class="hours-input" min="0" max="10" value="1" placeholder="週時数">
-                                <span class="hours-unit">時間/週</span>
-                            </div>
-                            <div class="subject-config-item">
-                                <label class="subject-label">総合的な学習の時間</label>
-                                <input type="number" id="special-sougou" class="hours-input" min="0" max="10" value="2" placeholder="週時数">
-                                <span class="hours-unit">時間/週</span>
-                            </div>
-                            <div class="subject-config-item">
-                                <label class="subject-label">特別活動</label>
-                                <input type="number" id="special-tokkatsu" class="hours-input" min="0" max="10" value="1" placeholder="週時数">
-                                <span class="hours-unit">時間/週</span>
-                            </div>
-                            <div class="subject-config-item special-subject">
-                                <label class="subject-label">自立活動</label>
-                                <input type="number" id="special-jiritsu" class="hours-input" min="0" max="10" value="2" placeholder="週時数">
-                                <span class="hours-unit">時間/週</span>
-                            </div>
-                            <div class="subject-config-item special-subject">
-                                <label class="subject-label">作業学習</label>
-                                <input type="number" id="special-sagyou" class="hours-input" min="0" max="10" value="3" placeholder="週時数">
-                                <span class="hours-unit">時間/週</span>
+                        <!-- クラス選択部分 -->
+                        <div class="class-selection-section">
+                            <h3>設定対象クラス選択</h3>
+                            <div class="class-selector">
+                                <select id="special-class-selector" class="class-select-dropdown">
+                                    <option value="">クラスを選択してください</option>
+                                </select>
+                                <button id="load-class-config" class="secondary-button">選択クラスの設定を読み込み</button>
                             </div>
                         </div>
-                        
-                        <div class="config-actions">
-                            <div class="total-hours">
-                                <span>合計時数: </span>
-                                <span id="total-hours-display" class="total-number">30</span>
-                                <span>時間/週</span>
+
+                        <!-- 時数設定部分（クラス選択後に表示） -->
+                        <div id="hours-config-section" class="hours-config-section" style="display: none;">
+                            <h3 id="current-class-title">設定中: </h3>
+                            
+                            <div class="subject-config-grid">
+                                <div class="subject-config-item">
+                                    <label class="subject-label">国語</label>
+                                    <input type="number" id="special-kokugo" class="hours-input" min="0" max="10" value="4" placeholder="週時数">
+                                    <span class="hours-unit">時間/週</span>
+                                </div>
+                                <div class="subject-config-item">
+                                    <label class="subject-label">社会</label>
+                                    <input type="number" id="special-shakai" class="hours-input" min="0" max="10" value="2" placeholder="週時数">
+                                    <span class="hours-unit">時間/週</span>
+                                </div>
+                                <div class="subject-config-item">
+                                    <label class="subject-label">数学</label>
+                                    <input type="number" id="special-sugaku" class="hours-input" min="0" max="10" value="4" placeholder="週時数">
+                                    <span class="hours-unit">時間/週</span>
+                                </div>
+                                <div class="subject-config-item">
+                                    <label class="subject-label">理科</label>
+                                    <input type="number" id="special-rika" class="hours-input" min="0" max="10" value="2" placeholder="週時数">
+                                    <span class="hours-unit">時間/週</span>
+                                </div>
+                                <div class="subject-config-item">
+                                    <label class="subject-label">音楽</label>
+                                    <input type="number" id="special-ongaku" class="hours-input" min="0" max="10" value="2" placeholder="週時数">
+                                    <span class="hours-unit">時間/週</span>
+                                </div>
+                                <div class="subject-config-item">
+                                    <label class="subject-label">美術</label>
+                                    <input type="number" id="special-bijutsu" class="hours-input" min="0" max="10" value="1" placeholder="週時数">
+                                    <span class="hours-unit">時間/週</span>
+                                </div>
+                                <div class="subject-config-item">
+                                    <label class="subject-label">保健体育</label>
+                                    <input type="number" id="special-taiiku" class="hours-input" min="0" max="10" value="3" placeholder="週時数">
+                                    <span class="hours-unit">時間/週</span>
+                                </div>
+                                <div class="subject-config-item">
+                                    <label class="subject-label">技術・家庭</label>
+                                    <input type="number" id="special-gijutsu" class="hours-input" min="0" max="10" value="2" placeholder="週時数">
+                                    <span class="hours-unit">時間/週</span>
+                                </div>
+                                <div class="subject-config-item">
+                                    <label class="subject-label">外国語</label>
+                                    <input type="number" id="special-gaikokugo" class="hours-input" min="0" max="10" value="3" placeholder="週時数">
+                                    <span class="hours-unit">時間/週</span>
+                                </div>
+                                <div class="subject-config-item">
+                                    <label class="subject-label">道徳</label>
+                                    <input type="number" id="special-doutoku" class="hours-input" min="0" max="10" value="1" placeholder="週時数">
+                                    <span class="hours-unit">時間/週</span>
+                                </div>
+                                <div class="subject-config-item">
+                                    <label class="subject-label">総合的な学習の時間</label>
+                                    <input type="number" id="special-sougou" class="hours-input" min="0" max="10" value="2" placeholder="週時数">
+                                    <span class="hours-unit">時間/週</span>
+                                </div>
+                                <div class="subject-config-item">
+                                    <label class="subject-label">特別活動</label>
+                                    <input type="number" id="special-tokkatsu" class="hours-input" min="0" max="10" value="1" placeholder="週時数">
+                                    <span class="hours-unit">時間/週</span>
+                                </div>
+                                <div class="subject-config-item special-subject">
+                                    <label class="subject-label">自立活動</label>
+                                    <input type="number" id="special-jiritsu" class="hours-input" min="0" max="10" value="2" placeholder="週時数">
+                                    <span class="hours-unit">時間/週</span>
+                                </div>
+                                <div class="subject-config-item special-subject">
+                                    <label class="subject-label">作業学習</label>
+                                    <input type="number" id="special-sagyou" class="hours-input" min="0" max="10" value="3" placeholder="週時数">
+                                    <span class="hours-unit">時間/週</span>
+                                </div>
                             </div>
-                            <button id="save-special-config" class="primary-button">特別支援時数設定を保存</button>
-                            <button id="reset-special-config" class="secondary-button">デフォルトに戻す</button>
+                            
+                            <div class="config-actions">
+                                <div class="total-hours">
+                                    <span>合計時数: </span>
+                                    <span id="total-hours-display" class="total-number">29</span>
+                                    <span>時間/週 (基準: 29時間)</span>
+                                </div>
+                                <button id="save-special-config" class="primary-button">選択クラスの時数設定を保存</button>
+                                <button id="reset-special-config" class="secondary-button">29時間基準に戻す</button>
+                            </div>
                         </div>
                     </div>
                 </div>

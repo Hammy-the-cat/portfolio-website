@@ -720,6 +720,260 @@ document.head.appendChild(style);
 // アプリケーションを初期化
 const timetable = new TimetableGenerator();
 
+// 特別支援教育クラス別時数管理
+class SpecialSupportHoursManager {
+    constructor() {
+        this.classHoursConfig = new Map(); // クラスID -> 時数設定のマップ
+        this.currentSelectedClass = null;
+        this.initializeEvents();
+        this.loadSpecialSupportClasses();
+    }
+
+    initializeEvents() {
+        // クラス選択ドロップダウンの変更イベント
+        const classSelector = document.getElementById('special-class-selector');
+        if (classSelector) {
+            classSelector.addEventListener('change', (e) => {
+                this.selectClass(e.target.value);
+            });
+        }
+
+        // 設定読み込みボタン
+        const loadButton = document.getElementById('load-class-config');
+        if (loadButton) {
+            loadButton.addEventListener('click', () => {
+                this.loadClassConfig();
+            });
+        }
+
+        // 保存ボタン
+        const saveButton = document.getElementById('save-special-config');
+        if (saveButton) {
+            saveButton.addEventListener('click', () => {
+                this.saveClassConfig();
+            });
+        }
+
+        // リセットボタン
+        const resetButton = document.getElementById('reset-special-config');
+        if (resetButton) {
+            resetButton.addEventListener('click', () => {
+                this.resetToDefault();
+            });
+        }
+
+        // 時数入力フィールドの変更監視
+        this.setupHoursInputListeners();
+    }
+
+    setupHoursInputListeners() {
+        const hoursInputs = document.querySelectorAll('.hours-input');
+        hoursInputs.forEach(input => {
+            input.addEventListener('input', () => {
+                this.calculateTotal();
+            });
+        });
+    }
+
+    loadSpecialSupportClasses() {
+        const classSelector = document.getElementById('special-class-selector');
+        if (!classSelector) return;
+
+        // 既存のoptionをクリア（最初のデフォルトオプション以外）
+        while (classSelector.children.length > 1) {
+            classSelector.removeChild(classSelector.lastChild);
+        }
+
+        // 特別支援クラスを取得してドロップダウンに追加
+        const specialSupportClasses = this.getSpecialSupportClasses();
+        specialSupportClasses.forEach(cls => {
+            const option = document.createElement('option');
+            option.value = cls.id;
+            option.textContent = cls.name;
+            classSelector.appendChild(option);
+        });
+    }
+
+    getSpecialSupportClasses() {
+        // DataManagerからクラス情報を取得
+        if (typeof timetable !== 'undefined' && timetable.classes) {
+            return timetable.classes.filter(cls => cls.type === 'special-support');
+        }
+        return [];
+    }
+
+    selectClass(classId) {
+        if (!classId) {
+            this.hideConfigSection();
+            return;
+        }
+
+        this.currentSelectedClass = classId;
+        this.showConfigSection();
+        this.updateClassTitle(classId);
+        this.loadClassConfig();
+    }
+
+    showConfigSection() {
+        const configSection = document.getElementById('hours-config-section');
+        if (configSection) {
+            configSection.style.display = 'block';
+        }
+    }
+
+    hideConfigSection() {
+        const configSection = document.getElementById('hours-config-section');
+        if (configSection) {
+            configSection.style.display = 'none';
+        }
+        this.currentSelectedClass = null;
+    }
+
+    updateClassTitle(classId) {
+        const titleElement = document.getElementById('current-class-title');
+        const className = this.getClassName(classId);
+        if (titleElement) {
+            titleElement.textContent = `設定中: ${className}`;
+        }
+    }
+
+    getClassName(classId) {
+        const cls = timetable.classes.find(c => c.id === classId);
+        return cls ? cls.name : `クラス ${classId}`;
+    }
+
+    loadClassConfig() {
+        if (!this.currentSelectedClass) return;
+
+        // 保存された設定があるかチェック
+        const savedConfig = this.classHoursConfig.get(this.currentSelectedClass);
+        
+        if (savedConfig) {
+            // 保存された設定を入力フィールドに反映
+            this.applyConfigToForm(savedConfig);
+        } else {
+            // デフォルト値（29時間基準）を設定
+            this.setDefaultHours();
+        }
+        
+        this.calculateTotal();
+    }
+
+    applyConfigToForm(config) {
+        Object.entries(config).forEach(([subjectId, hours]) => {
+            const input = document.getElementById(subjectId);
+            if (input) {
+                input.value = hours;
+            }
+        });
+    }
+
+    setDefaultHours() {
+        // 29時間基準のデフォルト値
+        const defaultHours = {
+            'special-kokugo': 4,
+            'special-shakai': 2,
+            'special-sugaku': 4,
+            'special-rika': 2,
+            'special-ongaku': 2,
+            'special-bijutsu': 1,
+            'special-taiiku': 3,
+            'special-gijutsu': 2,
+            'special-gaikokugo': 3,
+            'special-doutoku': 1,
+            'special-sougou': 2,
+            'special-tokkatsu': 1,
+            'special-jiritsu': 1,
+            'special-sagyou': 1
+        };
+
+        this.applyConfigToForm(defaultHours);
+    }
+
+    saveClassConfig() {
+        if (!this.currentSelectedClass) {
+            alert('クラスが選択されていません');
+            return;
+        }
+
+        // 現在の入力値を取得
+        const config = this.getCurrentFormConfig();
+        
+        // マップに保存
+        this.classHoursConfig.set(this.currentSelectedClass, config);
+        
+        // LocalStorageに保存
+        this.saveToStorage();
+        
+        alert(`${this.getClassName(this.currentSelectedClass)}の時数設定を保存しました`);
+    }
+
+    getCurrentFormConfig() {
+        const config = {};
+        const hoursInputs = document.querySelectorAll('.hours-input');
+        
+        hoursInputs.forEach(input => {
+            config[input.id] = parseInt(input.value) || 0;
+        });
+        
+        return config;
+    }
+
+    resetToDefault() {
+        if (confirm('29時間基準のデフォルト値に戻しますか？')) {
+            this.setDefaultHours();
+            this.calculateTotal();
+        }
+    }
+
+    calculateTotal() {
+        let total = 0;
+        const hoursInputs = document.querySelectorAll('.hours-input');
+        
+        hoursInputs.forEach(input => {
+            total += parseInt(input.value) || 0;
+        });
+
+        const totalDisplay = document.getElementById('total-hours-display');
+        if (totalDisplay) {
+            totalDisplay.textContent = total;
+            
+            // 色分け表示
+            totalDisplay.className = 'total-number';
+            if (total === 29) {
+                totalDisplay.classList.add('good');
+            } else if (Math.abs(total - 29) > 3) {
+                totalDisplay.classList.add('warning');
+            }
+        }
+    }
+
+    saveToStorage() {
+        const data = Object.fromEntries(this.classHoursConfig);
+        localStorage.setItem('special-support-hours-config', JSON.stringify(data));
+    }
+
+    loadFromStorage() {
+        try {
+            const data = localStorage.getItem('special-support-hours-config');
+            if (data) {
+                const parsed = JSON.parse(data);
+                this.classHoursConfig = new Map(Object.entries(parsed));
+            }
+        } catch (error) {
+            console.error('特別支援時数設定の読み込みに失敗:', error);
+        }
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     console.log('時間割ジェネレーターが初期化されました');
+    
+    // 特別支援教育時数管理を初期化
+    setTimeout(() => {
+        if (typeof SpecialSupportHoursManager !== 'undefined') {
+            window.specialSupportManager = new SpecialSupportHoursManager();
+            console.log('特別支援教育時数管理が初期化されました');
+        }
+    }, 500); // DOM構築完了を待つ
 });
