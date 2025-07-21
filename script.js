@@ -169,6 +169,7 @@ class TimetableGenerator {
     init() {
         this.dataManager.loadFromStorage();
         this.setupEventListeners();
+        this.setupAdditionalEventListeners();
         this.uiManager.updateDisplay();
     }
 
@@ -180,133 +181,321 @@ class TimetableGenerator {
             });
         });
 
-        // 設定画面のイベント
-        document.getElementById('add-teacher').addEventListener('click', () => this.addTeacher());
-        document.getElementById('add-class').addEventListener('click', () => this.addClass());
-        document.getElementById('add-subject').addEventListener('click', () => this.addSubject());
+        // 設定画面のイベント - 要素の存在確認付き
+        this.safeAddEventListener('add-teacher', 'click', () => this.addTeacher());
+        this.safeAddEventListener('init-default-classes', 'click', () => this.initializeDefaultClasses());
+        this.safeAddEventListener('add-grade-1', 'click', () => this.addGradeClasses(1));
+        this.safeAddEventListener('add-grade-2', 'click', () => this.addGradeClasses(2));
+        this.safeAddEventListener('add-grade-3', 'click', () => this.addGradeClasses(3));
         
-        document.getElementById('save-settings').addEventListener('click', () => this.saveSettings());
-        document.getElementById('load-settings').addEventListener('click', () => this.loadSettings());
-        document.getElementById('reset-settings').addEventListener('click', () => this.resetSettings());
+        this.safeAddEventListener('save-settings', 'click', () => this.saveSettings());
+        this.safeAddEventListener('load-settings', 'click', () => this.loadSettings());
+        this.safeAddEventListener('reset-settings', 'click', () => this.resetSettings());
 
         // 生成画面のイベント
-        document.getElementById('generate-schedule').addEventListener('click', () => this.generateSchedule());
-        document.getElementById('manual-edit').addEventListener('click', () => this.enableManualEdit());
+        this.safeAddEventListener('generate-schedule', 'click', () => this.generateSchedule());
+        this.safeAddEventListener('manual-edit', 'click', () => this.enableManualEdit());
 
         // フルスクリーン機能
-        document.getElementById('fullscreen-settings').addEventListener('click', () => this.toggleFullscreen('settings'));
+        this.safeAddEventListener('fullscreen-settings', 'click', () => this.toggleFullscreen('settings'));
 
         // 出力画面のイベント
-        document.getElementById('export-png').addEventListener('click', () => this.exportPNG());
-        document.getElementById('export-pdf').addEventListener('click', () => this.exportPDF());
-        document.getElementById('export-json').addEventListener('click', () => this.exportJSON());
-        document.getElementById('export-csv').addEventListener('click', () => this.exportCSV());
-        document.getElementById('export-excel').addEventListener('click', () => this.exportExcel());
-        document.getElementById('export-project').addEventListener('click', () => this.exportProject());
+        this.safeAddEventListener('export-pdf', 'click', () => this.exportPDF());
+        this.safeAddEventListener('export-excel', 'click', () => this.exportExcel());
+        this.safeAddEventListener('export-json', 'click', () => this.exportJSON());
+        this.safeAddEventListener('import-json', 'change', (e) => this.importJSON(e));
         
-        document.getElementById('import-project-btn').addEventListener('click', () => {
+        // 教師登録の学年選択変更
+        this.safeAddEventListener('target-grade', 'change', () => this.updateClassOptions());
+        
+        // 教科選択の変更監視
+        for (let i = 1; i <= 3; i++) {
+            this.safeAddEventListener(`teacher-subject-${i}`, 'change', () => {
+                this.updateHoursDisplay(i);
+                this.updateSubjectRows();
+            });
+        }
+    }
+
+    safeAddEventListener(elementId, event, callback) {
+        const element = document.getElementById(elementId);
+        if (element) {
+            element.addEventListener(event, callback);
+            console.log(`Event listener added for ${elementId}`);
+        } else {
+            console.log(`Element not found: ${elementId}`);
+        }
+    }
+    
+    setupAdditionalEventListeners() {
+        this.safeAddEventListener('export-project', 'click', () => this.exportProject());
+        
+        this.safeAddEventListener('import-project-btn', 'click', () => {
             document.getElementById('import-project').click();
         });
-        document.getElementById('import-project').addEventListener('change', (e) => this.importProject(e));
+        this.safeAddEventListener('import-project', 'change', (e) => this.importProject(e));
     }
 
 
     // === 設定画面の機能 ===
     addTeacher() {
-        const name = document.getElementById('teacher-name').value.trim();
-        const subject = document.getElementById('teacher-subject').value.trim();
-        const hours = parseInt(document.getElementById('teacher-hours').value);
-
-        if (!name || !subject || !hours) {
-            this.showMessage('すべての項目を入力してください', 'error');
+        console.log('Adding teacher...');
+        const teacherName = document.getElementById('teacher-name').value.trim();
+        
+        if (!teacherName) {
+            alert('教師名を入力してください');
             return;
         }
-
+        
+        // 選択された教科と担当クラスを収集
+        const subjects = [];
+        for (let i = 1; i <= 3; i++) {
+            const subjectSelect = document.getElementById(`teacher-subject-${i}`);
+            const classSelect = document.getElementById(`teacher-class-${i}`);
+            
+            if (subjectSelect && subjectSelect.value && classSelect && classSelect.value) {
+                subjects.push({
+                    subject: subjectSelect.value,
+                    classId: classSelect.value,
+                    className: classSelect.options[classSelect.selectedIndex].text
+                });
+            }
+        }
+        
+        if (subjects.length === 0) {
+            alert('最低1つの教科と担当クラスを選択してください');
+            return;
+        }
+        
         const teacher = {
-            id: Date.now(),
-            name,
-            subject,
-            hours
+            id: Date.now().toString(),
+            name: teacherName,
+            subjects: subjects
         };
-
-        this.teachers.push(teacher);
-        this.renderTeachers();
+        
+        this.dataManager.addTeacher(teacher);
+        this.uiManager.updateDisplay();
         this.clearTeacherForm();
-        this.saveToStorage();
-        this.showMessage('教師を追加しました');
+        
+        console.log('Teacher added:', teacher);
     }
 
-    addClass() {
-        const name = document.getElementById('class-name').value.trim();
-        const students = parseInt(document.getElementById('class-students').value);
+    initializeDefaultClasses() {
+        console.log('Initializing default classes...');
+        this.dataManager.initializeDefaultClasses();
+        this.uiManager.updateDisplay();
+        this.updateClassOptions();
+    }
 
-        if (!name || !students) {
-            this.showMessage('すべての項目を入力してください', 'error');
+    addGradeClasses(grade) {
+        console.log(`Adding classes for grade ${grade}...`);
+        this.dataManager.addGradeClasses(grade);
+        this.uiManager.updateDisplay();
+        this.updateClassOptions();
+    }
+
+    clearTeacherForm() {
+        document.getElementById('teacher-name').value = '';
+        
+        for (let i = 1; i <= 3; i++) {
+            const subjectSelect = document.getElementById(`teacher-subject-${i}`);
+            const classSelect = document.getElementById(`teacher-class-${i}`);
+            const hoursDisplay = document.getElementById(`hours-display-${i}`);
+            const row = document.getElementById(`subject-row-${i}`);
+            
+            if (subjectSelect) subjectSelect.value = '';
+            if (classSelect) classSelect.value = '';
+            if (hoursDisplay) hoursDisplay.textContent = '-';
+            
+            // 2行目以降は非表示に
+            if (i > 1 && row) {
+                row.style.display = 'none';
+            }
+        }
+    }
+
+    updateClassOptions() {
+        console.log('Updating class options...');
+        const gradeSelect = document.getElementById('target-grade');
+        const selectedGrade = gradeSelect ? gradeSelect.value : '';
+        
+        console.log('Selected grade:', selectedGrade);
+        
+        // 各教科行のクラス選択を更新
+        for (let i = 1; i <= 3; i++) {
+            this.updateClassSelectForRow(i, selectedGrade);
+        }
+    }
+
+    updateClassSelectForRow(rowNumber, selectedGrade) {
+        const classSelect = document.getElementById(`teacher-class-${rowNumber}`);
+        if (!classSelect) {
+            console.log(`Class select not found for row ${rowNumber}`);
             return;
         }
+        
+        // 既存のオプションをクリア（最初のデフォルトオプション以外）
+        while (classSelect.children.length > 1) {
+            classSelect.removeChild(classSelect.lastChild);
+        }
+        
+        // クラス一覧を取得
+        const classes = this.dataManager.classes;
+        console.log('Available classes:', classes);
+        
+        if (classes && classes.length > 0) {
+            classes.forEach(cls => {
+                // 学年フィルタ
+                if (selectedGrade && cls.grade && cls.grade.toString() !== selectedGrade) {
+                    return;
+                }
+                
+                const option = document.createElement('option');
+                option.value = cls.id;
+                option.textContent = cls.name;
+                classSelect.appendChild(option);
+            });
+            console.log(`Updated class options for row ${rowNumber}, count:`, classSelect.children.length - 1);
+        } else {
+            console.log('No classes found');
+        }
+    }
 
-        const classObj = {
-            id: Date.now(),
-            name,
-            students
+    updateHoursDisplay(rowNumber) {
+        // 時数表示の更新ロジック
+        const hoursDisplay = document.getElementById(`hours-display-${rowNumber}`);
+        if (hoursDisplay) {
+            hoursDisplay.textContent = '-'; // 仮の実装
+        }
+    }
+
+    updateSubjectRows() {
+        // 教科行の表示更新ロジック
+        for (let i = 1; i <= 3; i++) {
+            const subjectSelect = document.getElementById(`teacher-subject-${i}`);
+            const row = document.getElementById(`subject-row-${i}`);
+            
+            if (subjectSelect && subjectSelect.value && row) {
+                row.style.display = 'flex';
+                
+                // 次の行を表示
+                if (i < 3) {
+                    const nextRow = document.getElementById(`subject-row-${i + 1}`);
+                    if (nextRow && nextRow.style.display === 'none') {
+                        nextRow.style.display = 'flex';
+                    }
+                }
+            }
+        }
+    }
+
+    // === 基本機能 ===
+    generateSchedule() {
+        console.log('時間割生成中...');
+        alert('時間割生成機能は準備中です');
+    }
+
+    enableManualEdit() {
+        console.log('手動編集モード');
+        alert('手動編集機能は準備中です');
+    }
+
+    toggleFullscreen(tabName) {
+        const tab = document.getElementById(`${tabName}-tab`);
+        const header = document.querySelector('header');
+        
+        if (tab.classList.contains('fullscreen')) {
+            tab.classList.remove('fullscreen');
+            header.style.display = 'block';
+        } else {
+            tab.classList.add('fullscreen');
+            header.style.display = 'none';
+        }
+    }
+
+    saveSettings() {
+        this.dataManager.saveToStorage();
+        alert('設定を保存しました');
+    }
+
+    loadSettings() {
+        this.dataManager.loadFromStorage();
+        this.uiManager.updateDisplay();
+        this.updateClassOptions();
+        alert('設定を読み込みました');
+    }
+
+    resetSettings() {
+        if (confirm('すべての設定をリセットしますか？')) {
+            this.dataManager.teachers = [];
+            this.dataManager.classes = [];
+            this.dataManager.subjects = [];
+            this.dataManager.saveToStorage();
+            this.uiManager.updateDisplay();
+            alert('設定をリセットしました');
+        }
+    }
+
+    exportPDF() {
+        alert('PDF出力機能は準備中です');
+    }
+
+    exportExcel() {
+        alert('Excel出力機能は準備中です');
+    }
+
+    exportJSON() {
+        const data = {
+            teachers: this.dataManager.teachers,
+            classes: this.dataManager.classes,
+            subjects: this.dataManager.subjects,
+            timestamp: new Date().toISOString()
         };
-
-        this.classes.push(classObj);
-        this.renderClasses();
-        this.clearClassForm();
-        this.saveToStorage();
-        this.showMessage('クラスを追加しました');
+        
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'timetable-data.json';
+        a.click();
+        URL.revokeObjectURL(url);
     }
 
-    addSubject() {
-        const name = document.getElementById('subject-name').value.trim();
-        const hours = parseInt(document.getElementById('subject-hours').value);
-        const color = document.getElementById('subject-color').value;
-
-        if (!name || !hours) {
-            this.showMessage('すべての項目を入力してください', 'error');
-            return;
-        }
-
-        const subject = {
-            id: Date.now(),
-            name,
-            hours,
-            color
+    importJSON(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const data = JSON.parse(e.target.result);
+                
+                if (data.teachers && data.classes) {
+                    this.dataManager.teachers = data.teachers;
+                    this.dataManager.classes = data.classes;
+                    this.dataManager.subjects = data.subjects || [];
+                    
+                    this.dataManager.saveToStorage();
+                    this.uiManager.updateDisplay();
+                    this.updateClassOptions();
+                    
+                    alert('データを読み込みました');
+                } else {
+                    alert('無効なファイル形式です');
+                }
+            } catch (error) {
+                alert('ファイルの読み込みに失敗しました');
+            }
         };
-
-        this.subjects.push(subject);
-        this.renderSubjects();
-        this.clearSubjectForm();
-        this.saveToStorage();
-        this.showMessage('教科を追加しました');
+        reader.readAsText(file);
     }
 
-    removeTeacher(id) {
-        if (confirm('この教師を削除しますか？')) {
-            this.teachers = this.teachers.filter(t => t.id !== id);
-            this.renderTeachers();
-            this.saveToStorage();
-            this.showMessage('教師を削除しました');
-        }
+    exportProject() {
+        this.exportJSON();
     }
 
-    removeClass(id) {
-        if (confirm('このクラスを削除しますか？')) {
-            this.classes = this.classes.filter(c => c.id !== id);
-            this.renderClasses();
-            this.saveToStorage();
-            this.showMessage('クラスを削除しました');
-        }
-    }
-
-    removeSubject(id) {
-        if (confirm('この教科を削除しますか？')) {
-            this.subjects = this.subjects.filter(s => s.id !== id);
-            this.renderSubjects();
-            this.saveToStorage();
-            this.showMessage('教科を削除しました');
-        }
+    importProject(event) {
+        this.importJSON(event);
     }
 
     // === レンダリング機能 ===
