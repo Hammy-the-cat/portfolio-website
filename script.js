@@ -1,24 +1,182 @@
-class TimetableGenerator {
+// モジュール1: データ管理
+class DataManager {
     constructor() {
         this.teachers = [];
         this.classes = [];
         this.subjects = [];
         this.schedule = {};
+    }
+
+    // LocalStorage最適化
+    saveToStorage() {
+        try {
+            const data = {
+                teachers: this.teachers,
+                classes: this.classes,
+                subjects: this.subjects,
+                timestamp: Date.now()
+            };
+            
+            // データ圧縮（JSON文字列の圧縮）
+            const compressed = JSON.stringify(data);
+            localStorage.setItem('timetable-data', compressed);
+            
+            // 古いデータのクリーンアップ
+            this.cleanupOldData();
+            
+            return true;
+        } catch (error) {
+            console.error('Storage save failed:', error);
+            return false;
+        }
+    }
+
+    loadFromStorage() {
+        try {
+            const data = localStorage.getItem('timetable-data');
+            if (data) {
+                const parsed = JSON.parse(data);
+                this.teachers = parsed.teachers || [];
+                this.classes = parsed.classes || [];
+                this.subjects = parsed.subjects || [];
+                
+                // データ整合性チェック
+                this.validateData();
+            }
+        } catch (error) {
+            console.error('Storage load failed:', error);
+            this.resetData();
+        }
+    }
+
+    cleanupOldData() {
+        const keys = Object.keys(localStorage);
+        const oldKeys = keys.filter(key => 
+            key.startsWith('timetable-') && 
+            key !== 'timetable-data'
+        );
+        oldKeys.forEach(key => localStorage.removeItem(key));
+    }
+
+    validateData() {
+        this.teachers = this.teachers.filter(t => t && t.name);
+        this.classes = this.classes.filter(c => c && c.name);
+        this.subjects = this.subjects.filter(s => s && s.name);
+    }
+
+    resetData() {
+        this.teachers = [];
+        this.classes = [];
+        this.subjects = [];
+        this.schedule = {};
+    }
+}
+
+// モジュール2: UI管理
+class UIManager {
+    constructor(dataManager) {
+        this.dataManager = dataManager;
         this.currentTab = 'settings';
+    }
+
+    switchTab(tabName) {
+        this.currentTab = tabName;
+        document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+        
+        document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+        document.getElementById(`${tabName}-tab`).classList.add('active');
+    }
+
+    showNotification(message, type = 'success') {
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        notification.textContent = message;
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.classList.add('show');
+        }, 10);
+        
+        setTimeout(() => {
+            notification.classList.remove('show');
+            setTimeout(() => notification.remove(), 300);
+        }, 3000);
+    }
+
+    updateDisplay() {
+        this.renderTeachers();
+        this.renderClasses();
+        this.renderSubjects();
+    }
+
+    renderTeachers() {
+        const container = document.getElementById('teachers-list');
+        if (!container) return;
+        
+        container.innerHTML = '';
+        this.dataManager.teachers.forEach((teacher, index) => {
+            const div = document.createElement('div');
+            div.className = 'teacher-item';
+            div.innerHTML = `
+                <span>${teacher.name} - ${teacher.subject} (${teacher.hours}時間/週)</span>
+                <button onclick="app.removeTeacher(${index})" class="remove-btn">削除</button>
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    renderClasses() {
+        const container = document.getElementById('classes-list');
+        if (!container) return;
+        
+        container.innerHTML = '';
+        this.dataManager.classes.forEach((cls, index) => {
+            const div = document.createElement('div');
+            div.className = 'class-item';
+            div.innerHTML = `
+                <span>${cls.name}</span>
+                <button onclick="app.removeClass(${index})" class="remove-btn">削除</button>
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    renderSubjects() {
+        const container = document.getElementById('subjects-list');
+        if (!container) return;
+        
+        container.innerHTML = '';
+        this.dataManager.subjects.forEach((subject, index) => {
+            const div = document.createElement('div');
+            div.className = 'subject-item';
+            div.innerHTML = `
+                <span style="color: ${subject.color}">${subject.name}</span>
+                <button onclick="app.removeSubject(${index})" class="remove-btn">削除</button>
+            `;
+            container.appendChild(div);
+        });
+    }
+}
+
+class TimetableGenerator {
+    constructor() {
+        this.dataManager = new DataManager();
+        this.uiManager = new UIManager(this.dataManager);
         this.init();
     }
 
     init() {
-        this.loadFromStorage();
+        this.dataManager.loadFromStorage();
         this.setupEventListeners();
-        this.renderAllData();
+        this.uiManager.updateDisplay();
     }
 
     setupEventListeners() {
         // タブ切り替え
         document.querySelectorAll('.tab-button').forEach(button => {
             button.addEventListener('click', (e) => {
-                this.switchTab(e.target.dataset.tab);
+                this.uiManager.switchTab(e.target.dataset.tab);
             });
         });
 
@@ -52,22 +210,6 @@ class TimetableGenerator {
         document.getElementById('import-project').addEventListener('change', (e) => this.importProject(e));
     }
 
-    switchTab(tabName) {
-        // タブボタンの状態を更新
-        document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
-        document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
-
-        // タブコンテンツの表示を切り替え
-        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-        document.getElementById(`${tabName}-tab`).classList.add('active');
-
-        this.currentTab = tabName;
-
-        // 出力タブの場合はプレビューを更新
-        if (tabName === 'output') {
-            this.updatePreview();
-        }
-    }
 
     // === 設定画面の機能 ===
     addTeacher() {

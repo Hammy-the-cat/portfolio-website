@@ -15,7 +15,11 @@
       "Bash(git commit:*)",
       "Bash(gh repo create:*)",
       "Bash(curl:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(gh repo list:*)",
+      "WebFetch(domain:github.com)",
+      "Bash(mkdir:*)",
+      "WebFetch(domain:nginx.org)"
     ],
     "deny": []
   }

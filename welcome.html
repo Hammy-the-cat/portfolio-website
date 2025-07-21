@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome Board</title>
+    <link rel="stylesheet" href="welcome.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="marquee-container">
+                <div class="marquee-text">串間市立串間中学校へようこそ！</div>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="content-wrapper">
+                <section class="message-section">
+                    <div class="message-container">
+                        <div class="message-content">
+                            <p>グラウンドと体育館の熱中症指数です。各自、熱中症の予防を意識して過ごしましょう</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="info-sections">
+                    <div class="single-info-container">
+                        <div class="info-box-wide">
+                            <h3>今日の占い</h3>
+                            <div class="info-content-wide">
+                                <div class="info-item fortune-item">
+                                    <div class="fortune-info">
+                                        <div class="today-fortune">
+                                            <div class="fortune-main">
+                                                <span class="fortune-icon" id="fortuneIcon">🔮</span>
+                                                <div class="fortune-content">
+                                                    <span class="fortune-title" id="fortuneTitle">総合運</span>
+                                                    <div class="fortune-stars" id="fortuneStars">★★★★☆</div>
+                                                </div>
+                                            </div>
+                                            <div class="fortune-message">
+                                                <p id="fortuneMessage">新しい出会いが幸運を運んでくる予感。積極的にコミュニケーションを取ることで、良い結果が期待できそうです。</p>
+                                            </div>
+                                        </div>
+                                        <div class="fortune-details">
+                                            <div class="fortune-category">
+                                                <span class="category-label">恋愛運</span>
+                                                <span class="category-stars" id="loveStars">★★★☆☆</span>
+                                            </div>
+                                            <div class="fortune-category">
+                                                <span class="category-label">仕事運</span>
+                                                <span class="category-stars" id="workStars">★★★★☆</span>
+                                            </div>
+                                            <div class="fortune-category">
+                                                <span class="category-label">金運</span>
+                                                <span class="category-stars" id="moneyStars">★★☆☆☆</span>
+                                            </div>
+                                            <div class="fortune-category">
+                                                <span class="category-label">健康運</span>
+                                                <span class="category-stars" id="healthStars">★★★★★</span>
+                                            </div>
+                                        </div>
+                                        <div class="lucky-items">
+                                            <div class="lucky-item">
+                                                <span class="lucky-label">ラッキーカラー:</span>
+                                                <span class="lucky-value" id="luckyColor">青</span>
+                                            </div>
+                                            <div class="lucky-item">
+                                                <span class="lucky-label">ラッキーナンバー:</span>
+                                                <span class="lucky-value" id="luckyNumber">7</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <script>
+            // 簡単な動的コンテンツ用のJavaScript
+            document.addEventListener('DOMContentLoaded', function() {
+                // 現在の日時を表示
+                const now = new Date();
+                const options = { 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric', 
+                    weekday: 'long' 
+                };
+                const dateString = now.toLocaleDateString('ja-JP', options);
+                
+                const messageContent = document.querySelector('.message-content p');
+                if (messageContent) {
+                    messageContent.textContent = `グラウンドと体育館の熱中症指数です。各自、熱中症の予防を意識して過ごしましょう`;
+                }
+
+                // 占い情報を生成
+                generateDailyFortune();
+                
+                // 15秒ごとに星座を切り替え
+                startZodiacRotation();
+                
+                // 問題ローテーションを開始
+                startQuestionRotation();
+            });
+
+            // 現在の星座インデックス
+            let currentZodiacIndex = 0;
+            let rotationTimer = null;
+
+            // 星座占い情報を生成する関数
+            function generateDailyFortune(zodiacIndex = null) {
+                const today = new Date();
+                
+                // 星座インデックスが指定されていない場合は現在の月を使用
+                if (zodiacIndex === null) {
+                    zodiacIndex = today.getMonth(); // 0-11 (1月=0, 12月=11)
+                }
+                
+                currentZodiacIndex = zodiacIndex;
+                const seed = today.getFullYear() * 10000 + (zodiacIndex + 1) * 100 + today.getDate();
+                
+                // シード値を使った疑似ランダム関数
+                function seededRandom(seed) {
+                    const x = Math.sin(seed) * 10000;
+                    return x - Math.floor(x);
+                }
+
+                // 12星座データ（月ごとに対応）
+                const zodiacSigns = [
+                    { name: 'みずがめ座', icon: '♒', period: '1/20-2/18', element: '風' },      // 1月
+                    { name: 'うお座', icon: '♓', period: '2/19-3/20', element: '水' },        // 2月
+                    { name: 'おひつじ座', icon: '♈', period: '3/21-4/19', element: '火' },     // 3月
+                    { name: 'おうし座', icon: '♉', period: '4/20-5/20', element: '地' },      // 4月
+                    { name: 'ふたご座', icon: '♊', period: '5/21-6/21', element: '風' },      // 5月
+                    { name: 'かに座', icon: '♋', period: '6/22-7/22', element: '水' },       // 6月
+                    { name: 'しし座', icon: '♌', period: '7/23-8/22', element: '火' },       // 7月
+                    { name: 'おとめ座', icon: '♍', period: '8/23-9/22', element: '地' },      // 8月
+                    { name: 'てんびん座', icon: '♎', period: '9/23-10/23', element: '風' },   // 9月
+                    { name: 'さそり座', icon: '♏', period: '10/24-11/22', element: '水' },    // 10月
+                    { name: 'いて座', icon: '♐', period: '11/23-12/21', element: '火' },     // 11月
+                    { name: 'やぎ座', icon: '♑', period: '12/22-1/19', element: '地' }       // 12月
+                ];
+
+                // 現在の星座を取得
+                const currentZodiac = zodiacSigns[zodiacIndex];
+
+                // 星座別メッセージ
+                const zodiacMessages = [
+                    '独創的なアイデアが評価される時期。自分らしさを大切にして、新しい挑戦をしてみましょう。', // みずがめ座
+                    '直感力が冴える日々。芸術的なセンスが開花し、創造的な活動で良い結果を得られそうです。', // うお座
+                    'エネルギッシュに行動することで道が開ける時。リーダーシップを発揮して積極的に進みましょう。', // おひつじ座
+                    '着実な努力が実を結ぶ時期。焦らずじっくりと取り組むことで、確実な成果が期待できます。', // おうし座
+                    'コミュニケーション能力が光る時。多くの人との交流が新しい可能性を運んでくれるでしょう。', // ふたご座
+                    '家族や仲間との絆が深まる時期。温かい気持ちで人と接することで、心豊かな日々を過ごせます。', // かに座
+                    '自信を持って表現することで注目を集める時。あなたの魅力が多くの人に伝わるでしょう。', // しし座
+                    '細やかな気配りと丁寧な作業が評価される時期。完璧を目指す姿勢が良い結果をもたらします。', // おとめ座
+                    'バランス感覚を活かして調和を生み出す時。公平な判断で周囲からの信頼を得られるでしょう。', // てんびん座
+                    '深い洞察力で物事の本質を見抜く時期。集中力を活かして重要な決断を下すのに適しています。', // さそり座
+                    '自由な発想で新たな世界を探求する時。冒険心を大切にして、未知の分野に挑戦してみましょう。', // いて座
+                    '責任感と計画性で目標を達成する時期。地道な努力が大きな成功につながるでしょう。' // やぎ座
+                ];
+
+                // ラッキーカラー（星座の要素別）
+                const elementColors = {
+                    '火': ['赤', '橙', '金'],
+                    '地': ['緑', '茶', '黒'],
+                    '風': ['黄', '青', '白'],
+                    '水': ['青', '紫', 'ピンク']
+                };
+
+                // 運勢を生成（星座と日付ベース）
+                const monthSeed = (zodiacIndex + 1) * 100;
+                const overallStars = Math.floor(seededRandom(seed + 1) * 5) + 1;
+                const loveStars = Math.floor(seededRandom(seed + 2) * 5) + 1;
+                const workStars = Math.floor(seededRandom(seed + 3) * 5) + 1;
+                const moneyStars = Math.floor(seededRandom(seed + 4) * 5) + 1;
+                const healthStars = Math.floor(seededRandom(seed + 5) * 5) + 1;
+
+                // ラッキーアイテム
+                const colorOptions = elementColors[currentZodiac.element];
+                const luckyColor = colorOptions[Math.floor(seededRandom(seed + 6) * colorOptions.length)];
+                const luckyNumbers = [zodiacIndex + 1, (zodiacIndex + 1) * 3, (zodiacIndex + 1) * 7];
+                const luckyNumber = luckyNumbers[Math.floor(seededRandom(seed + 7) * luckyNumbers.length)];
+
+                // 星の表示を生成
+                function generateStars(count) {
+                    return '★'.repeat(count) + '☆'.repeat(5 - count);
+                }
+
+                // DOMを更新
+                document.getElementById('fortuneIcon').textContent = currentZodiac.icon;
+                document.getElementById('fortuneTitle').textContent = `${currentZodiac.name} (${currentZodiac.period})`;
+                document.getElementById('fortuneStars').textContent = generateStars(overallStars);
+                document.getElementById('fortuneMessage').textContent = zodiacMessages[zodiacIndex];
+                
+                document.getElementById('loveStars').textContent = generateStars(loveStars);
+                document.getElementById('workStars').textContent = generateStars(workStars);
+                document.getElementById('moneyStars').textContent = generateStars(moneyStars);
+                document.getElementById('healthStars').textContent = generateStars(healthStars);
+                
+                document.getElementById('luckyColor').textContent = luckyColor;
+                document.getElementById('luckyNumber').textContent = luckyNumber;
+
+                console.log(`星座占い: ${currentZodiac.name}を生成しました (${zodiacIndex + 1}/12)`);
+            }
+
+            // 15秒ごとの星座ローテーションを開始
+            function startZodiacRotation() {
+                // 初期表示は1番目の星座（みずがめ座）から
+                currentZodiacIndex = 0;
+                generateDailyFortune(currentZodiacIndex);
+                
+                // 15秒ごとに次の星座に切り替え
+                rotationTimer = setInterval(() => {
+                    currentZodiacIndex = (currentZodiacIndex + 1) % 12; // 0-11をループ
+                    
+                    // フェードアウト効果
+                    const fortuneItem = document.querySelector('.fortune-item');
+                    fortuneItem.style.opacity = '0.5';
+                    fortuneItem.style.transform = 'scale(0.95)';
+                    
+                    setTimeout(() => {
+                        generateDailyFortune(currentZodiacIndex);
+                        
+                        // フェードイン効果
+                        fortuneItem.style.opacity = '1';
+                        fortuneItem.style.transform = 'scale(1)';
+                    }, 300);
+                    
+                }, 15000); // 15秒 = 15000ミリ秒
+            }
+
+            // ローテーションを停止する関数
+            function stopZodiacRotation() {
+                if (rotationTimer) {
+                    clearInterval(rotationTimer);
+                    rotationTimer = null;
+                }
+            }
+
+            // 占いを手動で更新する関数（デバッグ用）
+            function refreshFortune() {
+                generateDailyFortune(currentZodiacIndex);
+            }
+
+            // 次の星座に手動で切り替える関数（デバッグ用）
+            function nextZodiac() {
+                currentZodiacIndex = (currentZodiacIndex + 1) % 12;
+                generateDailyFortune(currentZodiacIndex);
+            }
+
+            // 社会科問題データ（問題と答えを分離）
+            const socialStudiesQuestions = [
+                {
+                    question: "日本の首都はどこでしょうか？",
+                    answer: "東京都"
+                },
+                {
+                    question: "日本の最も長い川はどれでしょうか？",
+                    answer: "信濃川"
+                },
+                {
+                    question: "日本の最も高い山はどれでしょうか？",
+                    answer: "富士山"
+                },
+                {
+                    question: "日本が開国したのは何年でしょうか？",
+                    answer: "1854年（嘉永7年）"
+                },
+                {
+                    question: "明治維新が起こったのは何年でしょうか？",
+                    answer: "1868年"
+                },
+                {
+                    question: "第二次世界大戦が終わったのは何年でしょうか？",
+                    answer: "1945年"
+                },
+                {
+                    question: "日本国憲法が施行されたのは何年でしょうか？",
+                    answer: "1947年"
+                },
+                {
+                    question: "日本の国会は何院制でしょうか？",
+                    answer: "二院制（衆議院・参議院）"
+                },
+                {
+                    question: "日本の47番目の都道府県はどこでしょうか？",
+                    answer: "沖縄県"
+                },
+                {
+                    question: "江戸幕府を開いたのは誰でしょうか？",
+                    answer: "徳川家康"
+                },
+                {
+                    question: "鎌倉幕府を開いたのは誰でしょうか？",
+                    answer: "源頼朝"
+                },
+                {
+                    question: "日本の三権分立とは何でしょうか？",
+                    answer: "立法・行政・司法"
+                },
+                {
+                    question: "日本の人口は約何人でしょうか？",
+                    answer: "約1億2500万人"
+                },
+                {
+                    question: "日本の面積は約何万平方キロメートルでしょうか？",
+                    answer: "約38万平方キロメートル"
+                },
+                {
+                    question: "日本列島は4つの大きな島からなります。本州・四国・九州ともう一つは？",
+                    answer: "北海道"
+                }
+            ];
+
+            let currentQuestionIndex = 0;
+            let isShowingAnswer = false;
+            let countdownInterval = null;
+            let questionTimeout = null;
+            let answerTimeout = null;
+
+            // 問題ローテーションを開始
+            function startQuestionRotation() {
+                // 初期問題を設定
+                showQuestion();
+            }
+
+            // 問題を表示する関数
+            function showQuestion() {
+                isShowingAnswer = false;
+                const questionElement = document.getElementById('questionText');
+                const questionDisplay = document.getElementById('questionDisplay');
+                const answerDisplay = document.getElementById('answerDisplay');
+                const countdownTimer = document.getElementById('countdownTimer');
+                
+                // 既存のタイマーをクリア
+                if (countdownInterval) clearInterval(countdownInterval);
+                if (questionTimeout) clearTimeout(questionTimeout);
+                if (answerTimeout) clearTimeout(answerTimeout);
+                
+                // 答えを非表示、問題を表示
+                answerDisplay.style.display = 'none';
+                questionDisplay.style.display = 'flex';
+                countdownTimer.style.display = 'flex';
+                questionElement.textContent = socialStudiesQuestions[currentQuestionIndex].question;
+                
+                // 10秒カウントダウンを開始
+                startCountdown(10);
+                
+                // 10秒後に答えを表示
+                questionTimeout = setTimeout(() => {
+                    if (!isShowingAnswer) {
+                        showAnswer();
+                    }
+                }, 10000);
+            }
+
+            // 答えを表示する関数
+            function showAnswer() {
+                isShowingAnswer = true;
+                const questionDisplay = document.getElementById('questionDisplay');
+                const answerDisplay = document.getElementById('answerDisplay');
+                const answerText = document.getElementById('answerText');
+                
+                // 既存のタイマーをクリア
+                if (countdownInterval) clearInterval(countdownInterval);
+                
+                // 問題を非表示、答えを表示
+                questionDisplay.style.display = 'none';
+                answerDisplay.style.display = 'flex';
+                answerText.textContent = socialStudiesQuestions[currentQuestionIndex].answer;
+                
+                // 5秒後に次の問題を表示
+                answerTimeout = setTimeout(() => {
+                    if (isShowingAnswer) {
+                        currentQuestionIndex = (currentQuestionIndex + 1) % socialStudiesQuestions.length;
+                        showQuestion();
+                    }
+                }, 5000);
+            }
+            
+            // カウントダウンタイマーを開始する関数
+            function startCountdown(seconds) {
+                let timeLeft = seconds;
+                
+                // 初期状態：すべての□を表示
+                resetSquares();
+                
+                countdownInterval = setInterval(() => {
+                    // 残り時間に応じて□を消す
+                    const squareToHide = 10 - timeLeft + 1;
+                    if (squareToHide >= 1 && squareToHide <= 10) {
+                        const square = document.getElementById(`square${squareToHide}`);
+                        if (square) {
+                            square.classList.add('hidden');
+                        }
+                    }
+                    
+                    timeLeft--;
+                    
+                    // カウントダウンが0になったらクリア
+                    if (timeLeft <= 0) {
+                        clearInterval(countdownInterval);
+                        countdownInterval = null;
+                    }
+                }, 1000);
+            }
+            
+            // □をリセットする関数
+            function resetSquares() {
+                for (let i = 1; i <= 10; i++) {
+                    const square = document.getElementById(`square${i}`);
+                    if (square) {
+                        square.classList.remove('hidden');
+                    }
+                }
+            }
+        </script>
+
+        <footer class="footer">
+            <div class="question-container">
+                <div class="question-display" id="questionDisplay">
+                    <div class="question-label">
+                        <span class="question-category">【1問1答問題にチャレンジ】</span>
+                    </div>
+                    <div class="question-content">
+                        <span class="question-text" id="questionText">日本の首都はどこでしょうか？</span>
+                    </div>
+                    <div class="countdown-timer" id="countdownTimer">
+                        <div class="countdown-square" id="square1"></div>
+                        <div class="countdown-square" id="square2"></div>
+                        <div class="countdown-square" id="square3"></div>
+                        <div class="countdown-square" id="square4"></div>
+                        <div class="countdown-square" id="square5"></div>
+                        <div class="countdown-square" id="square6"></div>
+                        <div class="countdown-square" id="square7"></div>
+                        <div class="countdown-square" id="square8"></div>
+                        <div class="countdown-square" id="square9"></div>
+                        <div class="countdown-square" id="square10"></div>
+                    </div>
+                </div>
+                <div class="answer-display" id="answerDisplay" style="display: none;">
+                    <span class="answer-text" id="answerText">東京都</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

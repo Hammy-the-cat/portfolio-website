@@ -26,11 +26,91 @@
                 <!-- 教師設定 -->
                 <div class="settings-section">
                     <h2>教師情報</h2>
-                    <div class="form-row">
-                        <input type="text" id="teacher-name" placeholder="教師名">
-                        <input type="text" id="teacher-subject" placeholder="担当教科">
-                        <input type="number" id="teacher-hours" placeholder="週授業時間数" min="1" max="30">
-                        <button id="add-teacher">追加</button>
+                    <div class="teacher-form">
+                        <div class="form-row">
+                            <input type="text" id="teacher-name" placeholder="教師名">
+                        </div>
+                        <div class="subjects-input">
+                            <h3>担当教科（最大3つまで）</h3>
+                            <div class="grade-selector">
+                                <label>対象学年:</label>
+                                <select id="target-grade" class="grade-select">
+                                    <option value="">全学年平均</option>
+                                    <option value="1">1年生</option>
+                                    <option value="2">2年生</option>
+                                    <option value="3">3年生</option>
+                                </select>
+                            </div>
+                            <div class="subject-row" id="subject-row-1">
+                                <select id="teacher-subject-1" class="subject-select">
+                                    <option value="">教科を選択</option>
+                                    <option value="国語">国語</option>
+                                    <option value="社会">社会</option>
+                                    <option value="数学">数学</option>
+                                    <option value="理科">理科</option>
+                                    <option value="音楽">音楽</option>
+                                    <option value="美術">美術</option>
+                                    <option value="保健体育">保健体育</option>
+                                    <option value="技術・家庭">技術・家庭</option>
+                                    <option value="外国語">外国語</option>
+                                    <option value="道徳">道徳</option>
+                                    <option value="総合的な学習の時間">総合的な学習の時間</option>
+                                    <option value="特別活動">特別活動</option>
+                                </select>
+                                <select id="teacher-class-1" class="class-select">
+                                    <option value="">担当クラス選択</option>
+                                </select>
+                                <span class="calculated-hours" id="hours-display-1">-</span>
+                            </div>
+                            <div class="subject-row" id="subject-row-2" style="display: none;">
+                                <select id="teacher-subject-2" class="subject-select">
+                                    <option value="">教科を選択</option>
+                                    <option value="国語">国語</option>
+                                    <option value="社会">社会</option>
+                                    <option value="数学">数学</option>
+                                    <option value="理科">理科</option>
+                                    <option value="音楽">音楽</option>
+                                    <option value="美術">美術</option>
+                                    <option value="保健体育">保健体育</option>
+                                    <option value="技術・家庭">技術・家庭</option>
+                                    <option value="外国語">外国語</option>
+                                    <option value="道徳">道徳</option>
+                                    <option value="総合的な学習の時間">総合的な学習の時間</option>
+                                    <option value="特別活動">特別活動</option>
+                                </select>
+                                <select id="teacher-class-2" class="class-select">
+                                    <option value="">担当クラス選択</option>
+                                </select>
+                                <span class="calculated-hours" id="hours-display-2">-</span>
+                                <button type="button" class="remove-subject" onclick="removeSubjectRow(2)">削除</button>
+                            </div>
+                            <div class="subject-row" id="subject-row-3" style="display: none;">
+                                <select id="teacher-subject-3" class="subject-select">
+                                    <option value="">教科を選択</option>
+                                    <option value="国語">国語</option>
+                                    <option value="社会">社会</option>
+                                    <option value="数学">数学</option>
+                                    <option value="理科">理科</option>
+                                    <option value="音楽">音楽</option>
+                                    <option value="美術">美術</option>
+                                    <option value="保健体育">保健体育</option>
+                                    <option value="技術・家庭">技術・家庭</option>
+                                    <option value="外国語">外国語</option>
+                                    <option value="道徳">道徳</option>
+                                    <option value="総合的な学習の時間">総合的な学習の時間</option>
+                                    <option value="特別活動">特別活動</option>
+                                </select>
+                                <select id="teacher-class-3" class="class-select">
+                                    <option value="">担当クラス選択</option>
+                                </select>
+                                <span class="calculated-hours" id="hours-display-3">-</span>
+                                <button type="button" class="remove-subject" onclick="removeSubjectRow(3)">削除</button>
+                            </div>
+                            <button type="button" id="add-subject-row" class="secondary-button">教科を追加</button>
+                        </div>
+                        <div class="form-row">
+                            <button id="add-teacher" class="primary-button">教師を追加</button>
+                        </div>
                     </div>
                     <div id="teachers-list" class="data-list"></div>
                 </div>
@@ -38,12 +118,17 @@
                 <!-- クラス設定 -->
                 <div class="settings-section">
                     <h2>クラス情報</h2>
-                    <div class="form-row">
-                        <input type="text" id="class-name" placeholder="クラス名（例：1-A）">
-                        <input type="number" id="class-students" placeholder="生徒数" min="1" max="50">
-                        <button id="add-class">追加</button>
+                    <div class="class-management">
+                        <div class="class-controls">
+                            <button id="init-default-classes" class="primary-button">デフォルトクラス初期化</button>
+                            <div class="grade-buttons">
+                                <button id="add-grade-1" class="grade-button">1年生</button>
+                                <button id="add-grade-2" class="grade-button">2年生</button>
+                                <button id="add-grade-3" class="grade-button">3年生</button>
+                            </div>
+                        </div>
+                        <div id="classes-grid" class="classes-grid"></div>
                     </div>
-                    <div id="classes-list" class="data-list"></div>
                 </div>
 
                 <!-- 教科設定 -->
@@ -192,6 +277,347 @@
         </section>
     </main>
 
+    <script src="modules/dataManager.js"></script>
+    <script src="modules/uiManager.js"></script>
+    <script src="modules/scheduleGenerator.js"></script>
+    <script src="modules/subjectHours.js"></script>
+    <script>
+        
+        // メインアプリケーション初期化
+        class TimetableApp {
+            constructor() {
+                this.dataManager = new DataManager();
+                this.uiManager = new UIManager(this.dataManager);
+                this.scheduleGenerator = new ScheduleGenerator(this.dataManager);
+                this.hoursCalculator = new SubjectHoursCalculator();
+                this.init();
+            }
+
+            init() {
+                this.dataManager.loadFromStorage();
+                
+                // 初回起動時にデフォルトクラスがない場合は初期化
+                if (this.dataManager.classes.length === 0) {
+                    console.log('No classes found, initializing default classes...');
+                    this.dataManager.initializeDefaultClasses();
+                    console.log('Default classes created:', this.dataManager.classes.length);
+                }
+                
+                // DOM要素が確実に存在してからイベントリスナーを設定
+                setTimeout(() => {
+                    this.setupEventListeners();
+                    this.uiManager.updateDisplay();
+                    this.updateClassOptions();
+                }, 200);
+            }
+
+            setupEventListeners() {
+                // タブ切り替え
+                document.querySelectorAll('.tab-button').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        this.uiManager.switchTab(e.target.dataset.tab);
+                    });
+                });
+
+                // 各種イベントリスナー設定
+                this.setupSettingsEvents();
+                this.setupGenerateEvents();
+                this.setupOutputEvents();
+                this.setupSubjectRowHandlers();
+            }
+
+            setupSettingsEvents() {
+                console.log('Setting up settings events...');
+                
+                // 安全にイベントリスナーを追加
+                this.safeAddEventListener('add-teacher', 'click', () => this.addTeacher());
+                this.safeAddEventListener('add-subject', 'click', () => this.addSubject());
+                this.safeAddEventListener('init-default-classes', 'click', () => this.initializeDefaultClasses());
+                
+                // 学年別クラス追加
+                this.safeAddEventListener('add-grade-1', 'click', () => {
+                    console.log('Grade 1 button clicked');
+                    this.addGradeClasses(1);
+                });
+                
+                this.safeAddEventListener('add-grade-2', 'click', () => {
+                    console.log('Grade 2 button clicked');
+                    this.addGradeClasses(2);
+                });
+                
+                this.safeAddEventListener('add-grade-3', 'click', () => {
+                    console.log('Grade 3 button clicked');
+                    this.addGradeClasses(3);
+                });
+                
+                // 初期表示時にクラスオプションを更新
+                setTimeout(() => {
+                    this.updateClassOptions();
+                }, 300);
+            }
+
+            safeAddEventListener(elementId, event, handler) {
+                const element = document.getElementById(elementId);
+                if (element) {
+                    console.log(`✓ Found element: ${elementId}`);
+                    element.addEventListener(event, handler);
+                } else {
+                    console.error(`✗ Element not found: ${elementId}`);
+                }
+            }
+
+            initializeDefaultClasses() {
+                if (confirm('デフォルトクラス（各学年1-1組～1-15組）を初期化しますか？\n既存のクラス情報は上書きされます。')) {
+                    this.dataManager.initializeDefaultClasses();
+                    console.log('Default classes initialized:', this.dataManager.classes.length);
+                    this.uiManager.renderClasses();
+                    this.updateClassOptions();
+                    this.uiManager.showNotification('デフォルトクラスを初期化しました');
+                }
+            }
+
+            addGradeClasses(grade) {
+                console.log(`Adding grade ${grade} classes...`);
+                this.dataManager.addGradeClasses(grade);
+                console.log(`Grade ${grade} classes added:`, this.dataManager.getClassesByGrade(grade).length);
+                console.log('Total classes now:', this.dataManager.classes.length);
+                this.uiManager.renderClasses();
+                this.updateClassOptions();
+                this.uiManager.showNotification(`${grade}年生のクラス（1組～15組）を登録しました`);
+            }
+
+            toggleClassType(classId) {
+                this.dataManager.toggleClassType(classId);
+                this.uiManager.renderClasses();
+                this.updateClassOptions();
+                this.uiManager.showNotification('クラスタイプを変更しました');
+            }
+
+            toggleClassActive(classId) {
+                this.dataManager.toggleClassActive(classId);
+                this.uiManager.renderClasses();
+                this.updateClassOptions();
+                this.uiManager.showNotification('クラス状態を変更しました');
+            }
+
+            updateClassOptions() {
+                const classes = this.dataManager.getActiveClasses();
+                console.log('Updating class options with:', classes.length, 'classes');
+                
+                for (let i = 1; i <= 3; i++) {
+                    const classSelect = document.getElementById(`teacher-class-${i}`);
+                    if (classSelect) {
+                        // 現在の選択値を保存
+                        const currentValue = classSelect.value;
+                        
+                        // オプションをクリア
+                        classSelect.innerHTML = '<option value="">担当クラス選択</option>';
+                        
+                        // 登録されているクラスを追加
+                        classes.forEach(cls => {
+                            const option = document.createElement('option');
+                            option.value = cls.name;
+                            const typeLabel = cls.type === 'special_support' ? ' (特支)' : '';
+                            option.textContent = `${cls.name}${typeLabel}`;
+                            classSelect.appendChild(option);
+                        });
+                        
+                        // 以前の選択を復元
+                        if (currentValue) {
+                            classSelect.value = currentValue;
+                        }
+                        
+                        console.log(`Updated class select ${i} with ${classSelect.options.length - 1} options`);
+                    } else {
+                        console.warn(`Class select ${i} not found`);
+                    }
+                }
+            }
+
+            setupGenerateEvents() {
+                document.getElementById('generate-schedule')?.addEventListener('click', () => this.generateSchedule());
+            }
+
+            setupOutputEvents() {
+                document.getElementById('export-json')?.addEventListener('click', () => this.exportJSON());
+            }
+
+            addTeacher() {
+                const name = document.getElementById('teacher-name').value.trim();
+                
+                if (!name) {
+                    this.uiManager.showNotification('教師名を入力してください', 'error');
+                    return;
+                }
+
+                // 複数教科の収集
+                const selectedGrade = document.getElementById('target-grade').value;
+                const grade = selectedGrade ? parseInt(selectedGrade) : null;
+                
+                const subjects = [];
+                for (let i = 1; i <= 3; i++) {
+                    const subjectName = document.getElementById(`teacher-subject-${i}`).value;
+                    const className = document.getElementById(`teacher-class-${i}`).value;
+                    
+                    if (subjectName) {
+                        const hours = this.hoursCalculator.getWeeklyHours(subjectName, grade);
+                        subjects.push({ 
+                            name: subjectName, 
+                            hours: hours,
+                            className: className || null
+                        });
+                    }
+                }
+
+                if (subjects.length === 0) {
+                    this.uiManager.showNotification('最低1つの教科を入力してください', 'error');
+                    return;
+                }
+
+                const teacher = { 
+                    id: Date.now(), 
+                    name, 
+                    subjects: subjects,
+                    targetGrade: grade 
+                };
+                
+                this.dataManager.addTeacher(teacher);
+                this.uiManager.renderTeachers();
+                this.clearTeacherForm();
+                this.uiManager.showNotification('教師を追加しました');
+            }
+
+            clearTeacherForm() {
+                document.getElementById('teacher-name').value = '';
+                document.getElementById('target-grade').value = '';
+                for (let i = 1; i <= 3; i++) {
+                    document.getElementById(`teacher-subject-${i}`).value = '';
+                    document.getElementById(`teacher-class-${i}`).value = '';
+                    document.getElementById(`hours-display-${i}`).textContent = '-';
+                    if (i > 1) {
+                        document.getElementById(`subject-row-${i}`).style.display = 'none';
+                    }
+                }
+            }
+
+            updateAllHoursDisplay() {
+                const selectedGrade = document.getElementById('target-grade').value;
+                const grade = selectedGrade ? parseInt(selectedGrade) : null;
+                
+                for (let i = 1; i <= 3; i++) {
+                    const subjectName = document.getElementById(`teacher-subject-${i}`).value;
+                    const hoursDisplay = document.getElementById(`hours-display-${i}`);
+                    
+                    if (hoursDisplay) {
+                        if (subjectName) {
+                            const hours = this.hoursCalculator.getWeeklyHours(subjectName, grade);
+                            const gradeText = grade ? `${grade}年` : '平均';
+                            hoursDisplay.textContent = `${hours}h/週 (${gradeText})`;
+                        } else {
+                            hoursDisplay.textContent = '-';
+                        }
+                    }
+                }
+            }
+
+            setupSubjectRowHandlers() {
+                // 教科追加ボタン
+                document.getElementById('add-subject-row')?.addEventListener('click', () => {
+                    this.showNextSubjectRow();
+                });
+
+                // 教科選択時の時数自動計算
+                for (let i = 1; i <= 3; i++) {
+                    const select = document.getElementById(`teacher-subject-${i}`);
+                    if (select) {
+                        select.addEventListener('change', (e) => {
+                            this.updateAllHoursDisplay();
+                        });
+                    }
+                }
+
+                // 学年選択時の時数更新
+                const gradeSelect = document.getElementById('target-grade');
+                if (gradeSelect) {
+                    gradeSelect.addEventListener('change', () => {
+                        this.updateAllHoursDisplay();
+                    });
+                }
+            }
+
+            showNextSubjectRow() {
+                for (let i = 2; i <= 3; i++) {
+                    const row = document.getElementById(`subject-row-${i}`);
+                    if (row.style.display === 'none') {
+                        row.style.display = 'flex';
+                        break;
+                    }
+                }
+            }
+
+            // グローバル関数として教科行削除
+            removeSubjectRow(rowNumber) {
+                const row = document.getElementById(`subject-row-${rowNumber}`);
+                if (row) {
+                    row.style.display = 'none';
+                    document.getElementById(`teacher-subject-${rowNumber}`).value = '';
+                    document.getElementById(`teacher-hours-${rowNumber}`).value = '';
+                }
+            }
+
+            // 他のメソッドも同様に実装...
+        }
+
+        // DOM読み込み完了後にアプリケーション初期化
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM Content Loaded');
+            window.app = new TimetableApp();
+        });
+        
+        // fallback - すでにDOMが読み込まれている場合
+        if (document.readyState === 'loading') {
+            // まだ読み込み中の場合は上のDOMContentLoadedを待つ
+        } else {
+            // すでに読み込み完了している場合は即座に実行
+            console.log('DOM already loaded');
+            window.app = new TimetableApp();
+        }
+        
+        // グローバル関数の定義
+        window.toggleClassType = function(classId) {
+            window.app.toggleClassType(classId);
+        };
+        
+        window.toggleClassActive = function(classId) {
+            window.app.toggleClassActive(classId);
+        };
+        
+        // テスト用のグローバル関数
+        window.testAddGrade1 = function() {
+            console.log('Test: Adding grade 1 classes');
+            window.app.addGradeClasses(1);
+        };
+        
+        window.testRenderClasses = function() {
+            console.log('Test: Rendering classes');
+            window.app.uiManager.renderClasses();
+        };
+        
+        window.showClasses = function() {
+            console.log('Current classes:', window.app.dataManager.classes);
+        };
+        
+        // グローバル関数として教科行削除を定義
+        window.removeSubjectRow = function(rowNumber) {
+            const row = document.getElementById(`subject-row-${rowNumber}`);
+            if (row) {
+                row.style.display = 'none';
+                document.getElementById(`teacher-subject-${rowNumber}`).value = '';
+                document.getElementById(`teacher-class-${rowNumber}`).value = '';
+                document.getElementById(`hours-display-${rowNumber}`).textContent = '-';
+            }
+        };
+    </script>
     <script src="script.js"></script>
 </body>
 </html>
