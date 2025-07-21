@@ -717,14 +717,12 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
-// アプリケーションを初期化
-const timetable = new TimetableGenerator();
-
 // 特別支援教育クラス別時数管理
 class SpecialSupportHoursManager {
     constructor() {
         this.classHoursConfig = new Map(); // クラスID -> 時数設定のマップ
         this.currentSelectedClass = null;
+        this.loadFromStorage();
         this.initializeEvents();
         this.loadSpecialSupportClasses();
     }
@@ -979,17 +977,32 @@ class SpecialSupportHoursManager {
     }
 }
 
+// アプリケーションを初期化
+let timetable;
+
 document.addEventListener('DOMContentLoaded', () => {
     console.log('時間割ジェネレーターが初期化されました');
     
+    // TimetableGeneratorを初期化
+    try {
+        timetable = new TimetableGenerator();
+        console.log('TimetableGenerator初期化完了');
+    } catch (error) {
+        console.error('TimetableGenerator初期化エラー:', error);
+    }
+    
     // 特別支援教育時数管理を初期化
     setTimeout(() => {
-        if (typeof SpecialSupportHoursManager !== 'undefined') {
-            window.specialSupportManager = new SpecialSupportHoursManager();
-            console.log('特別支援教育時数管理が初期化されました');
-            
-            // クラス管理システムとの連携を設定
-            setupClassManagementIntegration();
+        try {
+            if (typeof SpecialSupportHoursManager !== 'undefined') {
+                window.specialSupportManager = new SpecialSupportHoursManager();
+                console.log('特別支援教育時数管理が初期化されました');
+                
+                // クラス管理システムとの連携を設定
+                setupClassManagementIntegration();
+            }
+        } catch (error) {
+            console.error('SpecialSupportHoursManager初期化エラー:', error);
         }
     }, 1000); // DOM構築完了を待つ
 });
