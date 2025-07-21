@@ -786,6 +786,8 @@ class SpecialSupportHoursManager {
 
         // 特別支援クラスを取得してドロップダウンに追加
         const specialSupportClasses = this.getSpecialSupportClasses();
+        console.log('特別支援クラス:', specialSupportClasses);
+        
         specialSupportClasses.forEach(cls => {
             const option = document.createElement('option');
             option.value = cls.id;
@@ -797,9 +799,20 @@ class SpecialSupportHoursManager {
     getSpecialSupportClasses() {
         // DataManagerからクラス情報を取得
         if (typeof timetable !== 'undefined' && timetable.classes) {
-            return timetable.classes.filter(cls => cls.type === 'special-support');
+            console.log('全クラス:', timetable.classes);
+            const specialClasses = timetable.classes.filter(cls => {
+                console.log('クラス確認:', cls.name, 'タイプ:', cls.type);
+                return cls.type === '特別支援' || cls.type === 'special-support';
+            });
+            console.log('フィルター後の特別支援クラス:', specialClasses);
+            return specialClasses;
         }
         return [];
+    }
+
+    // クラス情報が更新された時に呼び出される関数
+    refreshClassList() {
+        this.loadSpecialSupportClasses();
     }
 
     selectClass(classId) {
@@ -974,6 +987,42 @@ document.addEventListener('DOMContentLoaded', () => {
         if (typeof SpecialSupportHoursManager !== 'undefined') {
             window.specialSupportManager = new SpecialSupportHoursManager();
             console.log('特別支援教育時数管理が初期化されました');
+            
+            // クラス管理システムとの連携を設定
+            setupClassManagementIntegration();
         }
-    }, 500); // DOM構築完了を待つ
+    }, 1000); // DOM構築完了を待つ
 });
+
+// クラス管理システムとの連携設定
+function setupClassManagementIntegration() {
+    // クラス切り替えボタンのクリックイベントを監視
+    const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            if (mutation.type === 'childList') {
+                // クラス情報が更新された可能性がある
+                if (window.specialSupportManager) {
+                    setTimeout(() => {
+                        window.specialSupportManager.refreshClassList();
+                    }, 100);
+                }
+            }
+        });
+    });
+
+    // クラス表示エリアを監視
+    const classesGrid = document.getElementById('classes-grid');
+    if (classesGrid) {
+        observer.observe(classesGrid, {
+            childList: true,
+            subtree: true
+        });
+    }
+
+    // 初期読み込み時にもクラスリストを更新
+    if (window.specialSupportManager) {
+        setTimeout(() => {
+            window.specialSupportManager.refreshClassList();
+        }, 500);
+    }
+}
