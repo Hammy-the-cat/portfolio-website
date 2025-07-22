@@ -1,0 +1,248 @@
+{
+  "easy": [
+    {
+      "word": "hello",
+      "meaning": "こんにちは",
+      "difficulty": "easy",
+      "options": ["こんにちは", "さようなら", "ありがとう", "すみません"],
+      "correctAnswer": 0,
+      "timeLimit": 15
+    },
+    {
+      "word": "book",
+      "meaning": "本",
+      "difficulty": "easy", 
+      "options": ["本", "ペン", "机", "椅子"],
+      "correctAnswer": 0,
+      "timeLimit": 15
+    },
+    {
+      "word": "cat",
+      "meaning": "猫",
+      "difficulty": "easy",
+      "options": ["猫", "犬", "鳥", "魚"],
+      "correctAnswer": 0,
+      "timeLimit": 15
+    },
+    {
+      "word": "water",
+      "meaning": "水",
+      "difficulty": "easy",
+      "options": ["水", "火", "風", "土"],
+      "correctAnswer": 0,
+      "timeLimit": 15
+    },
+    {
+      "word": "apple",
+      "meaning": "りんご",
+      "difficulty": "easy",
+      "options": ["りんご", "みかん", "バナナ", "いちご"],
+      "correctAnswer": 0,
+      "timeLimit": 15
+    },
+    {
+      "word": "school",
+      "meaning": "学校",
+      "difficulty": "easy",
+      "options": ["学校", "病院", "図書館", "公園"],
+      "correctAnswer": 0,
+      "timeLimit": 15
+    },
+    {
+      "word": "friend",
+      "meaning": "友達",
+      "difficulty": "easy",
+      "options": ["友達", "家族", "先生", "医者"],
+      "correctAnswer": 0,
+      "timeLimit": 15
+    },
+    {
+      "word": "house",
+      "meaning": "家",
+      "difficulty": "easy",
+      "options": ["家", "学校", "店", "橋"],
+      "correctAnswer": 0,
+      "timeLimit": 15
+    },
+    {
+      "word": "time",
+      "meaning": "時間",
+      "difficulty": "easy",
+      "options": ["時間", "場所", "人", "物"],
+      "correctAnswer": 0,
+      "timeLimit": 15
+    },
+    {
+      "word": "happy",
+      "meaning": "幸せな",
+      "difficulty": "easy",
+      "options": ["幸せな", "悲しい", "怒った", "疲れた"],
+      "correctAnswer": 0,
+      "timeLimit": 15
+    }
+  ],
+  "medium": [
+    {
+      "word": "beautiful",
+      "meaning": "美しい",
+      "difficulty": "medium",
+      "options": ["美しい", "醜い", "大きい", "小さい"],
+      "correctAnswer": 0,
+      "timeLimit": 12
+    },
+    {
+      "word": "important",
+      "meaning": "重要な",
+      "difficulty": "medium",
+      "options": ["重要な", "簡単な", "困難な", "面白い"],
+      "correctAnswer": 0,
+      "timeLimit": 12
+    },
+    {
+      "word": "different",
+      "meaning": "異なる",
+      "difficulty": "medium",
+      "options": ["異なる", "同じ", "似ている", "近い"],
+      "correctAnswer": 0,
+      "timeLimit": 12
+    },
+    {
+      "word": "understand",
+      "meaning": "理解する",
+      "difficulty": "medium",
+      "options": ["理解する", "忘れる", "覚える", "教える"],
+      "correctAnswer": 0,
+      "timeLimit": 12
+    },
+    {
+      "word": "together",
+      "meaning": "一緒に",
+      "difficulty": "medium",
+      "options": ["一緒に", "別々に", "順番に", "急いで"],
+      "correctAnswer": 0,
+      "timeLimit": 12
+    },
+    {
+      "word": "adventure",
+      "meaning": "冒険",
+      "difficulty": "medium",
+      "options": ["冒険", "休暇", "勉強", "仕事"],
+      "correctAnswer": 0,
+      "timeLimit": 12
+    },
+    {
+      "word": "challenge",
+      "meaning": "挑戦",
+      "difficulty": "medium",
+      "options": ["挑戦", "休息", "失敗", "成功"],
+      "correctAnswer": 0,
+      "timeLimit": 12
+    },
+    {
+      "word": "discover",
+      "meaning": "発見する",
+      "difficulty": "medium",
+      "options": ["発見する", "隠す", "失う", "忘れる"],
+      "correctAnswer": 0,
+      "timeLimit": 12
+    },
+    {
+      "word": "journey",
+      "meaning": "旅",
+      "difficulty": "medium",
+      "options": ["旅", "家", "学校", "仕事"],
+      "correctAnswer": 0,
+      "timeLimit": 12
+    },
+    {
+      "word": "mystery",
+      "meaning": "謎",
+      "difficulty": "medium",
+      "options": ["謎", "答え", "質問", "事実"],
+      "correctAnswer": 0,
+      "timeLimit": 12
+    }
+  ],
+  "hard": [
+    {
+      "word": "magnificent",
+      "meaning": "壮大な",
+      "difficulty": "hard",
+      "options": ["壮大な", "小さな", "普通の", "悲しい"],
+      "correctAnswer": 0,
+      "timeLimit": 10
+    },
+    {
+      "word": "encyclopedia",
+      "meaning": "百科事典",
+      "difficulty": "hard",
+      "options": ["百科事典", "小説", "雑誌", "新聞"],
+      "correctAnswer": 0,
+      "timeLimit": 10
+    },
+    {
+      "word": "extraordinary",
+      "meaning": "並外れた",
+      "difficulty": "hard",
+      "options": ["並外れた", "普通の", "簡単な", "退屈な"],
+      "correctAnswer": 0,
+      "timeLimit": 10
+    },
+    {
+      "word": "sophisticated",
+      "meaning": "洗練された",
+      "difficulty": "hard",
+      "options": ["洗練された", "単純な", "古い", "汚い"],
+      "correctAnswer": 0,
+      "timeLimit": 10
+    },
+    {
+      "word": "comprehensive",
+      "meaning": "包括的な",
+      "difficulty": "hard",
+      "options": ["包括的な", "部分的な", "不完全な", "狭い"],
+      "correctAnswer": 0,
+      "timeLimit": 10
+    },
+    {
+      "word": "achievement",
+      "meaning": "達成",
+      "difficulty": "hard",
+      "options": ["達成", "失敗", "開始", "計画"],
+      "correctAnswer": 0,
+      "timeLimit": 10
+    },
+    {
+      "word": "philosophy",
+      "meaning": "哲学",
+      "difficulty": "hard",
+      "options": ["哲学", "科学", "芸術", "運動"],
+      "correctAnswer": 0,
+      "timeLimit": 10
+    },
+    {
+      "word": "architecture",
+      "meaning": "建築学",
+      "difficulty": "hard",
+      "options": ["建築学", "音楽", "料理", "農業"],
+      "correctAnswer": 0,
+      "timeLimit": 10
+    },
+    {
+      "word": "phenomenon",
+      "meaning": "現象",
+      "difficulty": "hard",
+      "options": ["現象", "原因", "結果", "理由"],
+      "correctAnswer": 0,
+      "timeLimit": 10
+    },
+    {
+      "word": "consciousness",
+      "meaning": "意識",
+      "difficulty": "hard",
+      "options": ["意識", "記憶", "感情", "思考"],
+      "correctAnswer": 0,
+      "timeLimit": 10
+    }
+  ]
+}
