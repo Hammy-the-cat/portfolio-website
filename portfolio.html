@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio - pw282</title>
+    <link rel="stylesheet" href="./portfolio.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="nav-brand">
+                <h1>Oda Taisuke</h1>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#about">About</a></li>
+                <li><a href="#skills">Skills</a></li>
+                <li><a href="#projects">Projects</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-content">
+                <h2>Web Developer</h2>
+                <p>フロントエンドとバックエンドの開発を手がけるフルスタック開発者です</p>
+                <a href="#projects" class="cta-button">作品を見る</a>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="about">
+            <div class="container">
+                <h2>About Me</h2>
+                <div class="about-content">
+                    <div class="about-text">
+                        <p>こんにちは！Oda Taisukeです。Webアプリケーション開発に情熱を注いでいます。</p>
+                        <p>JavaScript、TypeScript、Python等を使用して、ユーザーフレンドリーなアプリケーションを作成しています。</p>
+                        <p>教育系アプリから予想システムまで、幅広い分野での開発経験があります。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Skills Section -->
+        <section id="skills" class="skills">
+            <div class="container">
+                <h2>Skills</h2>
+                <div class="skills-grid">
+                    <div class="skill-category">
+                        <h3>Frontend</h3>
+                        <div class="skill-items">
+                            <span class="skill-tag">HTML5</span>
+                            <span class="skill-tag">CSS3</span>
+                            <span class="skill-tag">JavaScript</span>
+                            <span class="skill-tag">TypeScript</span>
+                            <span class="skill-tag">React</span>
+                            <span class="skill-tag">Vue.js</span>
+                        </div>
+                    </div>
+                    <div class="skill-category">
+                        <h3>Backend</h3>
+                        <div class="skill-items">
+                            <span class="skill-tag">Node.js</span>
+                            <span class="skill-tag">Python</span>
+                            <span class="skill-tag">FastAPI</span>
+                            <span class="skill-tag">Express.js</span>
+                            <span class="skill-tag">Socket.io</span>
+                        </div>
+                    </div>
+                    <div class="skill-category">
+                        <h3>Database & Tools</h3>
+                        <div class="skill-items">
+                            <span class="skill-tag">SQLite</span>
+                            <span class="skill-tag">Git</span>
+                            <span class="skill-tag">Vite</span>
+                            <span class="skill-tag">Tailwind CSS</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Projects Section -->
+        <section id="projects" class="projects">
+            <div class="container">
+                <h2>Projects</h2>
+                <div class="projects-grid">
+                    <div class="project-card">
+                        <div class="project-image">
+                            <div class="project-placeholder">🎮</div>
+                        </div>
+                        <div class="project-content">
+                            <h3>Kushima Sugoroku</h3>
+                            <p>リアルタイムタイピングゲーム。Socket.ioを使用したマルチプレイヤー対応のすごろく型タイピングゲームです。</p>
+                            <div class="project-tech">
+                                <span>React</span>
+                                <span>TypeScript</span>
+                                <span>Socket.io</span>
+                                <span>Node.js</span>
+                            </div>
+                            <div class="project-links">
+                                <a href="#" class="project-link">Demo</a>
+                                <a href="#" class="project-link">Code</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="project-card">
+                        <div class="project-image">
+                            <div class="project-placeholder">🚤</div>
+                        </div>
+                        <div class="project-content">
+                            <h3>Boatrace Predictor</h3>
+                            <p>機械学習を活用した競艇予想システム。XGBoostを使用してレース結果を予測するWebアプリケーションです。</p>
+                            <div class="project-tech">
+                                <span>Python</span>
+                                <span>FastAPI</span>
+                                <span>XGBoost</span>
+                                <span>React</span>
+                                <span>TypeScript</span>
+                            </div>
+                            <div class="project-links">
+                                <a href="#" class="project-link">Demo</a>
+                                <a href="#" class="project-link">Code</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="project-card">
+                        <div class="project-image">
+                            <div class="project-placeholder">📅</div>
+                        </div>
+                        <div class="project-content">
+                            <h3>Timetable Generator</h3>
+                            <p>学校向け時間割自動生成システム。教師の担当教科や特別支援クラスの時数設定に対応した時間割作成アプリです。</p>
+                            <div class="project-tech">
+                                <span>JavaScript</span>
+                                <span>HTML5</span>
+                                <span>CSS3</span>
+                            </div>
+                            <div class="project-links">
+                                <a href="#" class="project-link">Demo</a>
+                                <a href="#" class="project-link">Code</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="contact">
+            <div class="container">
+                <h2>Contact</h2>
+                <div class="contact-content">
+                    <p>プロジェクトのご相談やお仕事のご依頼がございましたら、お気軽にお声がけください。</p>
+                    <div class="contact-info">
+                        <div class="contact-item">
+                            <span class="contact-icon">📧</span>
+                            <span>Email: contact@example.com</span>
+                        </div>
+                        <div class="contact-item">
+                            <span class="contact-icon">💻</span>
+                            <span>GitHub: github.com/OdaTaisuke</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Oda Taisuke. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="./portfolio.js"></script>
+</body>
+</html>
